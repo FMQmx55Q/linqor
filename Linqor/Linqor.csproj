@@ -35,7 +35,6 @@
   <ItemGroup>
     <Compile Include="EnumeratorWrapper.cs" />
     <Compile Include="Grouping.cs" />
-    <Compile Include="KeyEnumeratorWrapper.cs" />
     <Compile Include="OrderedExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

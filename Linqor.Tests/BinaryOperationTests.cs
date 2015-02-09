@@ -67,8 +67,8 @@ namespace Linqor.Tests
             return GetOperateInfiniteCases().ToEntityCases().ToTestCases();
         }
 
-        protected abstract IEnumerable<Tuple<string, IEnumerable<int>, IEnumerable<int>, IEnumerable<int>>> GetOperateCases();
-        protected abstract IEnumerable<Tuple<string, IEnumerable<int>, IEnumerable<int>, IEnumerable<int>>> GetOperateInfiniteCases();
+        protected abstract IEnumerable<BinaryTestCase<int>> GetOperateCases();
+        protected abstract IEnumerable<BinaryTestCase<int>> GetOperateInfiniteCases();
 
         protected abstract IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner)
             where T : IComparable<T>;

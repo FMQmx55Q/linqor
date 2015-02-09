@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinaryOperationTests.cs" />
+    <Compile Include="BinaryTestCase.cs" />
     <Compile Include="TestEntity.cs" />
     <Compile Include="ConcatTests.cs" />
     <Compile Include="DistinctTests.cs" />
@@ -47,6 +48,7 @@
     <Compile Include="TestCases.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnaryOperationTests.cs" />
+    <Compile Include="UnaryTestCase.cs" />
     <Compile Include="UnionTests.cs" />
   </ItemGroup>
   <ItemGroup>

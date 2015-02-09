@@ -75,7 +75,7 @@ namespace Linqor.Tests
 
         protected abstract IEnumerable<T> OperateByEquals<T>(IEnumerable<T> source, Func<T, T, bool> equal);
 
-        protected abstract IEnumerable<Tuple<string, IEnumerable<int>, IEnumerable<int>>> GetOperateCases();
-        protected abstract IEnumerable<Tuple<string, IEnumerable<int>, IEnumerable<int>>> GetOperateInfiniteCases();
+        protected abstract IEnumerable<UnaryTestCase<int>> GetOperateCases();
+        protected abstract IEnumerable<UnaryTestCase<int>> GetOperateInfiniteCases();
     }
 }
