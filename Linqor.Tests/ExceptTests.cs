@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Linqor.Tests
 {
@@ -26,7 +27,7 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner, System.Func<T, T, int> compare)
+        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
         {
             return outer.OrderedExcept(inner, compare);
         }
