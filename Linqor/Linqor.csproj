@@ -33,9 +33,15 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Concat.cs" />
+    <Compile Include="Distinct.cs" />
     <Compile Include="EnumeratorWrapper.cs" />
+    <Compile Include="Except.cs" />
+    <Compile Include="GroupBy.cs" />
     <Compile Include="Grouping.cs" />
-    <Compile Include="OrderedExtensions.cs" />
+    <Compile Include="Intersect.cs" />
+    <Compile Include="Join.cs" />
+    <Compile Include="Union.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

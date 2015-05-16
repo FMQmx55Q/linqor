@@ -7,7 +7,7 @@ namespace Linqor.Tests
     public class JoinTests
     {
         [Test]
-        public void Should_OrderedJoin()
+        public void Join()
         {
             var outer = new[]
             {
@@ -25,7 +25,7 @@ namespace Linqor.Tests
                 new { Id = 4, Text = "Fourth" }
             };
 
-            var actual = outer.OrderedJoin(inner, o => o.Id, i => i.Id, (o, i) => new { o.Id, o.Name, i.Text }).ToArray();
+            var actual = outer.OrderedJoin(inner, o => o.Id, i => i.Id, (o, i) => new { o.Id, o.Name, i.Text }, (k1, k2) => k1.CompareTo(k2)).ToArray();
 
             Assert.That(actual[0], Is.EqualTo(new { Id = 1, Name = "One", Text = "First" }));
             Assert.That(actual[1], Is.EqualTo(new { Id = 2, Name = "Two", Text = "Second" }));
@@ -33,13 +33,13 @@ namespace Linqor.Tests
         }
 
         [Test]
-        [Timeout(5000)]
-        public void Should_OrderedJoin_Infinite()
+        [Timeout(3000)]
+        public void JoinInfinite()
         {
             var outer = TestCases.Generate(0, 1, 1).Select(i => new { Id = i, Name = i.ToString() });
             var inner = TestCases.Generate(1, 1, 1).Select(i => new { Id = i, Text = i.ToString() });
 
-            var actual = outer.OrderedJoin(inner, o => o.Id, i => i.Id, (o, i) => new { o.Id, o.Name, i.Text }).Take(3).ToArray();
+            var actual = outer.OrderedJoin(inner, o => o.Id, i => i.Id, (o, i) => new { o.Id, o.Name, i.Text }, (k1, k2) => k1.CompareTo(k2)).Take(3).ToArray();
 
             Assert.That(actual[0], Is.EqualTo(new { Id = 1, Name = "1", Text = "1" }));
             Assert.That(actual[1], Is.EqualTo(new { Id = 2, Name = "2", Text = "2" }));

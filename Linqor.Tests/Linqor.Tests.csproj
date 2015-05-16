@@ -39,9 +39,13 @@
   <ItemGroup>
     <Compile Include="BinaryOperationTests.cs" />
     <Compile Include="BinaryTestCase.cs" />
-    <Compile Include="TestEntity.cs" />
-    <Compile Include="ConcatTests.cs" />
+    <Compile Include="ConcatTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DistinctTests.cs" />
+    <Compile Include="ExceptTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GroupByTests.cs" />
     <Compile Include="IntersectTests.cs" />
     <Compile Include="JoinTests.cs" />

@@ -6,19 +6,9 @@ namespace Linqor.Tests
 {
     public static class TestCases
     {
-        public static IEnumerable<UnaryTestCase<TestEntity>> ToEntityCases(this IEnumerable<UnaryTestCase<int>> testCases)
-        {
-            return testCases.Select(testCase => UnaryTestCase.Create(testCase.Name, testCase.Source.Select(TestEntity.Create), testCase.Expected.Select(TestEntity.Create)));
-        }
-
         public static IEnumerable<ITestCaseData> ToTestCases<T>(this IEnumerable<UnaryTestCase<T>> testCases)
         {
             return testCases.Select(testCase => CreateUnary(testCase.Name, testCase.Source, testCase.Expected));
-        }
-
-        public static IEnumerable<BinaryTestCase<TestEntity>> ToEntityCases(this IEnumerable<BinaryTestCase<int>> testCases)
-        {
-            return testCases.Select(testCase => BinaryTestCase.Create(testCase.Name, testCase.Outer.Select(TestEntity.Create), testCase.Inner.Select(TestEntity.Create), testCase.Expected.Select(TestEntity.Create)));
         }
 
         public static IEnumerable<ITestCaseData> ToTestCases<T>(this IEnumerable<BinaryTestCase<T>> testCases)

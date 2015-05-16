@@ -30,33 +30,9 @@ namespace Linqor.Tests
             yield return BinaryTestCase.Create(name, TestCases.Generate(1, 1, 2), TestCases.Generate(2, 1, 2), new[] { 11, 12, 13, 14, 15 });
         }
 
-        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner)
-        {
-            return outer.OrderedUnion(inner);
-        }
-
-        protected override IEnumerable<T> OperateByKey<T, TKey>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, TKey> keySelector)
-        {
-            return outer.OrderedUnion(inner, keySelector);
-        }
-
-        protected override IEnumerable<T> OperateByCompare<T>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
+        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
         {
             return outer.OrderedUnion(inner, compare);
-        }
-
-        [Test]
-        public void Should_OrderedUnion_Descending_Enumerables_With_Custom_Comparer()
-        {
-            // Arrange
-            var first = new[] { 9, 7, 5, 3, 1 };
-            var second = new[] { 8, 6, 4, 2 };
-
-            // Act
-            int[] result = second.OrderedUnion(first, (x, y) => x.CompareTo(y) * -1).ToArray();
-
-            // Assert
-            Assert.That(result, Is.EqualTo(new[] { 9, 8, 7, 6, 5, 4, 3, 2, 1 }));
         }
     }
 }

@@ -28,37 +28,13 @@ namespace Linqor.Tests
 
         protected override IEnumerable<BinaryTestCase<int>> GetOperateInfiniteCases()
         {
-            const string name = "Intersect  ∞";
+            const string name = "Intersect ∞";
             yield return BinaryTestCase.Create(name, TestCases.Generate(1, 1, 2), TestCases.Generate(5, 1, 2), new[] { 25, 27, 29, 31, 33 });
         }
 
-        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner)
-        {
-            return outer.OrderedIntersect(inner);
-        }
-
-        protected override IEnumerable<T> OperateByKey<T, TKey>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, TKey> keySelector)
-        {
-            return outer.OrderedIntersect(inner, keySelector);
-        }
-
-        protected override IEnumerable<T> OperateByCompare<T>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
+        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
         {
             return outer.OrderedIntersect(inner, compare);
-        }
-
-        [Test]
-        public void Should_OrderedIntersect_Descending_Enumerables_With_Custom_Comparer()
-        {
-            // Arrange
-            var first = new[] { 5, 4, 3, 2, 1 };
-            var second = new[] { 6, 5, 4, 3, 2 };
-
-            // Act
-            int[] result = second.OrderedIntersect(first, (x, y) => x.CompareTo(y) * -1).ToArray();
-
-            // Assert
-            Assert.That(result, Is.EqualTo(new[] { 5, 4, 3, 2 }));
         }
     }
 }

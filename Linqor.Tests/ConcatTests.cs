@@ -7,33 +7,26 @@ namespace Linqor.Tests
     {
         protected override IEnumerable<BinaryTestCase<int>> GetOperateCases()
         {
-            const string name = "Concat";
+            var create = BinaryTestCase.GetCreator<int>("Concat");
             return new[]
             {
-                BinaryTestCase.Create(name, new int[] { }, new int[] { }, new int[] { }),
-                BinaryTestCase.Create(name, new int[] { 0 }, new int[] { 0 }, new int[] { 0, 0 }),
-                BinaryTestCase.Create(name, new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new int[] { 0, 0, 1, 1, 2, 2 }),
-                BinaryTestCase.Create(name, new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new int[] { 0, 1, 2, 2, 3, 4 })
+                create(new int[] { }, new int[] { }, new int[] { }),
+                create(new int[] { 0 }, new int[] { 0 }, new int[] { 0, 0 }),
+                create(new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new int[] { 0, 0, 1, 1, 2, 2 }),
+                create(new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new int[] { 0, 1, 2, 2, 3, 4 })
             };
         }
 
         protected override IEnumerable<BinaryTestCase<int>> GetOperateInfiniteCases()
         {
-            const string name = "Concat ∞";
-            yield return BinaryTestCase.Create(name, TestCases.Generate(0, 1, 1), TestCases.Generate(1, 1, 1), new[] { 5, 6, 6, 7, 7 });
+            var create = BinaryTestCase.GetCreator<int>("Concat ∞");
+            return new[]
+            {
+                create(TestCases.Generate(0, 1, 1), TestCases.Generate(1, 1, 1), new[] { 5, 6, 6, 7, 7 })
+            };
         }
 
-        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner)
-        {
-            return outer.OrderedConcat(inner);
-        }
-
-        protected override IEnumerable<T> OperateByKey<T, TKey>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, TKey> keySelector)
-        {
-            return outer.OrderedConcat(inner, keySelector);
-        }
-
-        protected override IEnumerable<T> OperateByCompare<T>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
+        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
         {
             return outer.OrderedConcat(inner, compare);
         }
