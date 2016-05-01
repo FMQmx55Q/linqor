@@ -6,7 +6,7 @@ namespace Linqor
     public static class Join
     {
         /// <summary>
-        /// Correlates the elements of two ordered sequences based on matching keys. One of the sequences must have unique elements.
+        /// Correlates the elements of two ordered sequences based on matching keys.
         /// </summary>
         public static IEnumerable<TResult> OrderedJoin<TOuter, TInner, TKey, TResult>(
             this IEnumerable<TOuter> outer,
@@ -21,24 +21,52 @@ namespace Linqor
             {
                 outerEnumerator.MoveNext();
                 innerEnumerator.MoveNext();
-
-                while (outerEnumerator.HasCurrent && innerEnumerator.HasCurrent)
+                
+                while (outerEnumerator.HasCurrent)
                 {
-                    int compareResult = compare(outerKeySelector(outerEnumerator.Current), innerKeySelector(innerEnumerator.Current));
-                    if (compareResult == 0)
+                    List<TInner> innerGroup = new List<TInner>();
+                    
+                    while(innerEnumerator.HasCurrent)
                     {
-                        yield return resultSelector(outerEnumerator.Current, innerEnumerator.Current);
+                        int compareResult = compare(outerKeySelector(outerEnumerator.Current), innerKeySelector(innerEnumerator.Current));
+                        if (compareResult == 0)
+                        {
+                            innerGroup.Add(innerEnumerator.Current);
+                            
+                            yield return resultSelector(outerEnumerator.Current, innerEnumerator.Current);                            
 
-                        outerEnumerator.MoveNext();
-                        innerEnumerator.MoveNext();
+                            innerEnumerator.MoveNext();
+                        }
+                        else if (compareResult > 0)
+                        {
+                            innerEnumerator.MoveNext();
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
-                    else if (compareResult > 0)
+                    
+                    TOuter previous = outerEnumerator.Current;
+                    outerEnumerator.MoveNext();
+                    
+                    while(outerEnumerator.HasCurrent)
                     {
-                        innerEnumerator.MoveNext();
-                    }
-                    else
-                    {
-                        outerEnumerator.MoveNext();
+                        int compareResult = compare(outerKeySelector(outerEnumerator.Current), outerKeySelector(previous));
+                        if (compareResult == 0)
+                        {
+                            foreach (TInner item in innerGroup)
+                            {
+                                yield return resultSelector(outerEnumerator.Current, item);
+                            }
+                            
+                            previous = outerEnumerator.Current;
+                            outerEnumerator.MoveNext();
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
             }

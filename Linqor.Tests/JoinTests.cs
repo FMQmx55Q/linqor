@@ -1,49 +1,33 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Linqor.Tests
 {
     [TestFixture]
-    public class JoinTests
+    public class JoinTests : BinaryOperationTests<int, int, string>
     {
-        [Test]
-        public void Join()
+        protected override IEnumerable<BinaryTestCase<int, int, string>> GetOperateCases()
         {
-            var outer = new[]
+            var create = BinaryTestCase.GetCreator<int, int, string>("Join");
+            return new[]
             {
-                new { Id = 0, Name = "Zero" },
-                new { Id = 1, Name = "One" },
-                new { Id = 2, Name = "Two" },
-                new { Id = 3, Name = "Three" }
+                create(new int[] { 1, 1, 2, 3, 3, 4 }, new[] { 0, 1, 2, 2, 3, 3 }, new[] { "1 1", "1 1", "2 2", "2 2", "3 3", "3 3", "3 3", "3 3" })
             };
-
-            var inner = new[]
-            {
-                new { Id = 1, Text = "First" },
-                new { Id = 2, Text = "Second" },
-                new { Id = 3, Text = "Third" },
-                new { Id = 4, Text = "Fourth" }
-            };
-
-            var actual = outer.OrderedJoin(inner, o => o.Id, i => i.Id, (o, i) => new { o.Id, o.Name, i.Text }, (k1, k2) => k1.CompareTo(k2)).ToArray();
-
-            Assert.That(actual[0], Is.EqualTo(new { Id = 1, Name = "One", Text = "First" }));
-            Assert.That(actual[1], Is.EqualTo(new { Id = 2, Name = "Two", Text = "Second" }));
-            Assert.That(actual[2], Is.EqualTo(new { Id = 3, Name = "Three", Text = "Third" }));
         }
 
-        [Test]
-        [Timeout(3000)]
-        public void JoinInfinite()
+        protected override IEnumerable<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
         {
-            var outer = TestCases.Generate(0, 1, 1).Select(i => new { Id = i, Name = i.ToString() });
-            var inner = TestCases.Generate(1, 1, 1).Select(i => new { Id = i, Text = i.ToString() });
+            var create = BinaryTestCase.GetCreator<int, int, string>("Join ∞");
+            return new[]
+            {
+                create(TestCases.Generate(0, 2, 1), TestCases.Generate(1, 1, 1), new[] { "6 6", "6 6", "7 7", "7 7", "8 8" })
+            };
+        }
 
-            var actual = outer.OrderedJoin(inner, o => o.Id, i => i.Id, (o, i) => new { o.Id, o.Name, i.Text }, (k1, k2) => k1.CompareTo(k2)).Take(3).ToArray();
-
-            Assert.That(actual[0], Is.EqualTo(new { Id = 1, Name = "1", Text = "1" }));
-            Assert.That(actual[1], Is.EqualTo(new { Id = 2, Name = "2", Text = "2" }));
-            Assert.That(actual[2], Is.EqualTo(new { Id = 3, Name = "3", Text = "3" }));
+        protected override IEnumerable<string> Operate(IEnumerable<int> outer, IEnumerable<int> inner)
+        {
+            return outer.OrderedJoin(inner, t => t, t => t, (left, right) => left + " " + right, (l, r) => l.CompareTo(r));
         }
     }
 }
