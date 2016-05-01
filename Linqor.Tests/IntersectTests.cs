@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using System.Collections.Generic;
 
 namespace Linqor.Tests
 {
-    public class IntersectTests : BinaryOperationTests
+    public class IntersectTests : BinaryOperationTests<int, int, int>
     {
-        protected override IEnumerable<BinaryTestCase<int>> GetOperateCases()
+        protected override IEnumerable<BinaryTestCase<int, int, int>> GetOperateCases()
         {
             const string name = "Intersect";
             return new[]
@@ -26,15 +21,15 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<BinaryTestCase<int>> GetOperateInfiniteCases()
+        protected override IEnumerable<BinaryTestCase<int, int, int>> GetOperateInfiniteCases()
         {
             const string name = "Intersect ∞";
             yield return BinaryTestCase.Create(name, TestCases.Generate(1, 1, 2), TestCases.Generate(5, 1, 2), new[] { 25, 27, 29, 31, 33 });
         }
 
-        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
+        protected override IEnumerable<int> Operate(IEnumerable<int> outer, IEnumerable<int> inner)
         {
-            return outer.OrderedIntersect(inner, compare);
+            return outer.OrderedIntersect(inner, (o, i) => o.CompareTo(i));
         }
     }
 }

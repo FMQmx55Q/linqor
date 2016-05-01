@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
+﻿using System.Collections.Generic;
 
 namespace Linqor.Tests
 {
-    public class UnionTests : BinaryOperationTests
+    public class UnionTests : BinaryOperationTests<int, int, int>
     {
-        protected override IEnumerable<BinaryTestCase<int>> GetOperateCases()
+        protected override IEnumerable<BinaryTestCase<int, int, int>> GetOperateCases()
         {
             const string name = "Union";
 
@@ -24,15 +21,15 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<BinaryTestCase<int>> GetOperateInfiniteCases()
+        protected override IEnumerable<BinaryTestCase<int, int, int>> GetOperateInfiniteCases()
         {
             const string name = "Union ∞";
             yield return BinaryTestCase.Create(name, TestCases.Generate(1, 1, 2), TestCases.Generate(2, 1, 2), new[] { 11, 12, 13, 14, 15 });
         }
 
-        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
+        protected override IEnumerable<int> Operate(IEnumerable<int> outer, IEnumerable<int> inner)
         {
-            return outer.OrderedUnion(inner, compare);
+            return outer.OrderedUnion(inner, (o, i) => o.CompareTo(i));
         }
     }
 }

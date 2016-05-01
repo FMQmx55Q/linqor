@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Linqor.Tests
 {
-    public class ConcatTests : BinaryOperationTests
+    public class ConcatTests : BinaryOperationTests<int, int, int>
     {
-        protected override IEnumerable<BinaryTestCase<int>> GetOperateCases()
+        protected override IEnumerable<BinaryTestCase<int, int, int>> GetOperateCases()
         {
             var create = BinaryTestCase.GetCreator<int>("Concat");
             return new[]
@@ -17,7 +16,7 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<BinaryTestCase<int>> GetOperateInfiniteCases()
+        protected override IEnumerable<BinaryTestCase<int, int, int>> GetOperateInfiniteCases()
         {
             var create = BinaryTestCase.GetCreator<int>("Concat ∞");
             return new[]
@@ -26,9 +25,9 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<T> Operate<T>(IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
+        protected override IEnumerable<int> Operate(IEnumerable<int> outer, IEnumerable<int> inner)
         {
-            return outer.OrderedConcat(inner, compare);
+            return outer.OrderedConcat(inner, (o, i) => o.CompareTo(i));
         }
     }
 }

@@ -5,14 +5,18 @@ namespace Linqor.Tests
 {
     public static class BinaryTestCase
     {
-        public static Func<IEnumerable<T>, IEnumerable<T>, IEnumerable<T>, BinaryTestCase<T>> GetCreator<T>(string name)
+        public static Func<IEnumerable<T>, IEnumerable<T>, IEnumerable<T>, BinaryTestCase<T, T, T>> GetCreator<T>(string name)
         {
-            return (outer, inner, expected) => BinaryTestCase.Create<T>(name, outer, inner, expected);
+            return GetCreator<T, T, T>(name);
+        }
+        public static Func<IEnumerable<TOuter>, IEnumerable<TInner>, IEnumerable<TExpected>, BinaryTestCase<TOuter, TInner, TExpected>> GetCreator<TOuter, TInner, TExpected>(string name)
+        {
+            return (outer, inner, expected) => BinaryTestCase.Create<TOuter, TInner, TExpected>(name, outer, inner, expected);
         }
 
-        public static BinaryTestCase<T> Create<T>(string name, IEnumerable<T> outer, IEnumerable<T> inner, IEnumerable<T> expected)
+        public static BinaryTestCase<TOuter, TInner, TExpected> Create<TOuter, TInner, TExpected>(string name, IEnumerable<TOuter> outer, IEnumerable<TInner> inner, IEnumerable<TExpected> expected)
         {
-            return new BinaryTestCase<T>
+            return new BinaryTestCase<TOuter, TInner, TExpected>
             {
                 Name = name,
                 Outer = outer,
@@ -21,11 +25,11 @@ namespace Linqor.Tests
             };
         }
     }
-    public class BinaryTestCase<T>
+    public class BinaryTestCase<TOuter, TInner, TExpected>
     {
         public string Name;
-        public IEnumerable<T> Outer;
-        public IEnumerable<T> Inner;
-        public IEnumerable<T> Expected;
+        public IEnumerable<TOuter> Outer;
+        public IEnumerable<TInner> Inner;
+        public IEnumerable<TExpected> Expected;
     }
 }
