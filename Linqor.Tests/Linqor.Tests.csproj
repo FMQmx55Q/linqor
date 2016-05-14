@@ -47,6 +47,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GroupByTests.cs" />
+    <Compile Include="GroupJoinTests.cs" />
     <Compile Include="IntersectTests.cs" />
     <Compile Include="JoinTests.cs" />
     <Compile Include="TestCases.cs" />

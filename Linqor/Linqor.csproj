@@ -39,6 +39,7 @@
     <Compile Include="Except.cs" />
     <Compile Include="GroupBy.cs" />
     <Compile Include="Grouping.cs" />
+    <Compile Include="GroupJoin.cs" />
     <Compile Include="Intersect.cs" />
     <Compile Include="Join.cs" />
     <Compile Include="Union.cs" />
