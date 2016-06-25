@@ -1,8 +1,8 @@
 language: csharp
 solution: Linqor.sln
 install:
-  - nuget restore Linqor.sln
-  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
-  script:
-  - xbuild /p:Configuration=Release Linqor.sln
-  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Linqor.Tests/bin/Release/Linqor.Tests.dll
+- nuget restore Linqor.sln
+- nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+script:
+- xbuild /p:Configuration=Release Linqor.sln
+- mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Linqor.Tests/bin/Release/Linqor.Tests.dll
