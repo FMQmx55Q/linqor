@@ -5,14 +5,19 @@ namespace Linqor.Tests
 {
     public static class UnaryTestCase
     {
-        public static Func<IEnumerable<T>, IEnumerable<T>, UnaryTestCase<T>> GetCreator<T>(string name)
+        public static Func<IEnumerable<T>, IEnumerable<T>, UnaryTestCase<T, T>> GetCreator<T>(string name)
         {
-            return (source, expected) => UnaryTestCase.Create<T>(name, source, expected);
+            return GetCreator<T, T>(name);
         }
 
-        public static UnaryTestCase<T> Create<T>(string name, IEnumerable<T> source, IEnumerable<T> expected)
+        public static Func<IEnumerable<TSource>, IEnumerable<TExpected>, UnaryTestCase<TSource, TExpected>> GetCreator<TSource, TExpected>(string name)
         {
-            return new UnaryTestCase<T>
+            return (source, expected) => UnaryTestCase.Create<TSource, TExpected>(name, source, expected);
+        }
+
+        public static UnaryTestCase<TSource, TExpected> Create<TSource, TExpected>(string name, IEnumerable<TSource> source, IEnumerable<TExpected> expected)
+        {
+            return new UnaryTestCase<TSource, TExpected>
             {
                 Name = name,
                 Source = source,
@@ -21,10 +26,10 @@ namespace Linqor.Tests
         }
     }
 
-    public class UnaryTestCase<T>
+    public class UnaryTestCase<TSource, TExpected>
     {
         public string Name;
-        public IEnumerable<T> Source;
-        public IEnumerable<T> Expected;
+        public IEnumerable<TSource> Source;
+        public IEnumerable<TExpected> Expected;
     }
 }

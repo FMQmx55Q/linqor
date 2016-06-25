@@ -11,7 +11,20 @@ namespace Linqor.Tests
             var create = BinaryTestCase.GetCreator<int, int, string>("Join");
             return new[]
             {
-                create(new int[] { 1, 1, 2, 3, 3, 4 }, new[] { 0, 1, 2, 2, 3, 3 }, new[] { "1 1", "1 1", "2 2", "2 2", "3 3", "3 3", "3 3", "3 3" })
+                create(new int[] { }, new int[] { }, new string[] { }),
+                create(new int[] { 0, 1, 2 }, new int[] { }, new string[] { }),
+                create(new int[] { }, new int[] { 0, 1, 2 }, new string[] { }),
+
+                create(new int[] { 0 }, new int[] { 0 }, new string[] { "0 0" }),
+                create(new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new string[] { "0 0", "1 1", "2 2" }),
+
+                create(new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new string[] { "2 2" }),
+                create(new int[] { 2, 3, 4 }, new int[] { 0, 1, 2 }, new string[] { "2 2" }),
+
+                create(new int[] { 0, 0, 1, 2, 2 }, new int[] { 0, 1, 1, 2 }, new string[] { "0 0", "0 0", "1 1", "1 1", "2 2", "2 2" }),
+                create(new int[] { 0, 0, 1, 3, 3 }, new int[] { 1, 1, 2, 2, 3 }, new string[] { "1 1", "1 1", "3 3", "3 3" }),
+            
+                create(new int[] { -1, 1, 1, 2, 3, 3, 4 }, new[] { 0, 1, 2, 2, 3, 3 }, new string[] { "1 1", "1 1", "2 2", "2 2", "3 3", "3 3", "3 3", "3 3" })
             };
         }
 
@@ -24,9 +37,9 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<string> Operate(IEnumerable<int> outer, IEnumerable<int> inner)
+        protected override IEnumerable<string> Operate(IEnumerable<int> left, IEnumerable<int> right)
         {
-            return outer.OrderedJoin(inner, t => t, t => t, (left, right) => left + " " + right, (l, r) => l.CompareTo(r));
+            return left.OrderedJoin(right, l => l, r => r, (l, r) => l + " " + r, (l, r) => l.CompareTo(r));
         }
     }
 }

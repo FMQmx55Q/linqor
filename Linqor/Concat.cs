@@ -8,47 +8,52 @@ namespace Linqor
         /// <summary>
         /// Concatenates two ordered sequences.
         /// </summary>
-        public static IEnumerable<T> OrderedConcat<T>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, T, int> compare)
+        public static IEnumerable<T> OrderedConcat<T>(this IEnumerable<T> left, IEnumerable<T> right, Func<T, T, int> compare)
         {
-            using (var firstEnumerator = new EnumeratorWrapper<T>(first.GetEnumerator()))
-            using (var secondEnumerator = new EnumeratorWrapper<T>(second.GetEnumerator()))
+            using (var leftEnumerator = left.GetEnumerator())
+            using (var rightEnumerator = right.GetEnumerator())
             {
-                firstEnumerator.MoveNext();
-                secondEnumerator.MoveNext();
+                EnumeratorState<T> leftState = leftEnumerator.Next();
+                EnumeratorState<T> rightState = rightEnumerator.Next();
 
-                while (firstEnumerator.HasCurrent && secondEnumerator.HasCurrent)
+                while (leftState.HasCurrent && rightState.HasCurrent)
                 {
-                    int compareResult = compare(firstEnumerator.Current, secondEnumerator.Current);
-                    if (compareResult == 0)
+                    switch(compare(leftState.Current, rightState.Current))
                     {
-                        yield return firstEnumerator.Current;
-                        firstEnumerator.MoveNext();
+                        case -1:
+                            yield return leftState.Current;
+                            leftState = leftEnumerator.Next();
+                            break;
+                        case 0:
+                            yield return leftState.Current;
+                            foreach(T item in leftEnumerator.TakeWhile(current => compare(leftState.Current, current) == 0, last => leftState = last))
+                            {
+                                yield return item;
+                            }
 
-                        yield return secondEnumerator.Current;
-                        secondEnumerator.MoveNext();
-                    }
-                    else if (compareResult > 0)
-                    {
-                        yield return secondEnumerator.Current;
-                        secondEnumerator.MoveNext();
-                    }
-                    else
-                    {
-                        yield return firstEnumerator.Current;
-                        firstEnumerator.MoveNext();
+                            yield return rightEnumerator.Current;
+                            foreach(T item in rightEnumerator.TakeWhile(current => compare(rightState.Current, current) == 0, last => rightState = last))
+                            {
+                                yield return item;
+                            }
+                            break;
+                        case 1:
+                            yield return rightEnumerator.Current;
+                            rightState = rightEnumerator.Next();
+                            break;
                     }
                 }
 
-                while (firstEnumerator.HasCurrent)
+                while (leftState.HasCurrent)
                 {
-                    yield return firstEnumerator.Current;
-                    firstEnumerator.MoveNext();
+                    yield return leftState.Current;
+                    leftState = leftEnumerator.Next();
                 }
 
-                while (secondEnumerator.HasCurrent)
+                while (rightState.HasCurrent)
                 {
-                    yield return secondEnumerator.Current;
-                    secondEnumerator.MoveNext();
+                    yield return rightState.Current;
+                    rightState = rightEnumerator.Next();
                 }
             }
         }

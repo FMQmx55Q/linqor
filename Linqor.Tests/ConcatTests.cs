@@ -10,9 +10,17 @@ namespace Linqor.Tests
             return new[]
             {
                 create(new int[] { }, new int[] { }, new int[] { }),
+                create(new int[] { 0, 1, 2 }, new int[] { }, new int[] { 0, 1, 2 }),
+                create(new int[] { }, new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }),
+
                 create(new int[] { 0 }, new int[] { 0 }, new int[] { 0, 0 }),
                 create(new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new int[] { 0, 0, 1, 1, 2, 2 }),
-                create(new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new int[] { 0, 1, 2, 2, 3, 4 })
+
+                create(new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new int[] { 0, 1, 2, 2, 3, 4 }),
+                create(new int[] { 2, 3, 4 }, new int[] { 0, 1, 2 }, new int[] { 0, 1, 2, 2, 3, 4 }),
+
+                create(new int[] { 0, 0, 1, 2, 2 }, new int[] { 0, 1, 1, 2 }, new int[] { 0, 0, 0, 1, 1, 1, 2, 2, 2 }),
+                create(new int[] { 0, 0, 1, 3, 3 }, new int[] { 1, 1, 2, 2, 3 }, new int[] { 0, 0, 1, 1, 1, 2, 2, 3, 3, 3 })
             };
         }
 
@@ -25,9 +33,9 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<int> Operate(IEnumerable<int> outer, IEnumerable<int> inner)
+        protected override IEnumerable<int> Operate(IEnumerable<int> left, IEnumerable<int> right)
         {
-            return outer.OrderedConcat(inner, (o, i) => o.CompareTo(i));
+            return left.OrderedConcat(right, (l, r) => l.CompareTo(r));
         }
     }
 }

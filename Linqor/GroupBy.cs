@@ -11,36 +11,20 @@ namespace Linqor
         /// </summary>
         public static IEnumerable<IGrouping<TKey, T>> OrderedGroupBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector, Func<TKey, TKey, bool> equals)
         {
-            using (var enumerator = new EnumeratorWrapper<T>(source.GetEnumerator()))
+            using (var enumerator = source.GetEnumerator())
             {
-                enumerator.MoveNext();
+                EnumeratorState<T> state = enumerator.Next();
 
-                if (!enumerator.HasCurrent)
+                while (state.HasCurrent)
                 {
-                    yield break;
+                    TKey groupKey = keySelector(state.Current);
+                    IReadOnlyList<T> elements = new[] { state.Current }
+                        .Concat(enumerator
+                            .TakeWhile(current => equals(groupKey, keySelector(current)), last => state = last))
+                        .ToArray();
+
+                    yield return new Grouping<TKey, T>(groupKey, elements);
                 }
-
-                TKey groupKey = keySelector(enumerator.Current);
-                List<T> elements = new List<T> { enumerator.Current };
-
-                while (enumerator.MoveNext())
-                {
-                    TKey currentKey = keySelector(enumerator.Current);
-
-                    if (equals(groupKey, currentKey))
-                    {
-                        elements.Add(enumerator.Current);
-                    }
-                    else
-                    {
-                        yield return new Grouping<TKey, T>(groupKey, elements);
-
-                        groupKey = currentKey;
-                        elements = new List<T> { enumerator.Current };
-                    }
-                }
-
-                yield return new Grouping<TKey, T>(groupKey, elements);
             }
         }
     }

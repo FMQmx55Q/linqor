@@ -10,27 +10,14 @@ namespace Linqor
         /// </summary>
         public static IEnumerable<T> OrderedDistinct<T>(this IEnumerable<T> source, Func<T, T, bool> equals)
         {
-            using (var enumerator = new EnumeratorWrapper<T>(source.GetEnumerator()))
+            using (var enumerator = source.GetEnumerator())
             {
-                enumerator.MoveNext();
+                EnumeratorState<T> state = enumerator.Next();
 
-                if (!enumerator.HasCurrent)
+                while (state.HasCurrent)
                 {
-                    yield break;
-                }
-
-                yield return enumerator.Current;
-
-                T previous = enumerator.Current;
-                while (enumerator.HasCurrent)
-                {
-                    if (!equals(previous, enumerator.Current))
-                    {
-                        yield return enumerator.Current;
-                    }
-                    previous = enumerator.Current;
-
-                    enumerator.MoveNext();
+                    yield return state.Current;
+                    state = enumerator.SkipWhile(current => equals(state.Current, current));
                 }
             }
         }

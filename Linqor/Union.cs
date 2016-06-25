@@ -8,45 +8,45 @@ namespace Linqor
         /// <summary>
         /// Produces the set union of two ordered sequences.
         /// </summary>
-        public static IEnumerable<T> OrderedUnion<T>(this IEnumerable<T> outer, IEnumerable<T> inner, Func<T, T, int> compare)
+        public static IEnumerable<T> OrderedUnion<T>(this IEnumerable<T> left, IEnumerable<T> right, Func<T, T, int> compare)
         {
-            using (var outerEnumerator = new EnumeratorWrapper<T>(outer.GetEnumerator()))
-            using (var innerEnumerator = new EnumeratorWrapper<T>(inner.GetEnumerator()))
+            Func<T, T, bool> equals = (l, r) => compare(l, r) == 0; 
+            using (var leftEnumerator = left.OrderedDistinct(equals).GetEnumerator())
+            using (var rightEnumerator = right.OrderedDistinct(equals).GetEnumerator())
             {
-                outerEnumerator.MoveNext();
-                innerEnumerator.MoveNext();
+                EnumeratorState<T> leftState = leftEnumerator.Next();
+                EnumeratorState<T> rightState = rightEnumerator.Next();
 
-                while (outerEnumerator.HasCurrent && innerEnumerator.HasCurrent)
+                while (leftState.HasCurrent && rightState.HasCurrent)
                 {
-                    int compareResult = compare(outerEnumerator.Current, innerEnumerator.Current);
-                    if (compareResult > 0)
+                    switch(compare(leftEnumerator.Current, rightEnumerator.Current))
                     {
-                        yield return innerEnumerator.Current;
-                        innerEnumerator.MoveNext();
-                    }
-                    else if (compareResult == 0)
-                    {
-                        yield return outerEnumerator.Current;
-                        outerEnumerator.MoveNext();
-                        innerEnumerator.MoveNext();
-                    }
-                    else
-                    {
-                        yield return outerEnumerator.Current;
-                        outerEnumerator.MoveNext();
+                        case -1:
+                            yield return leftEnumerator.Current;
+                            leftState = leftEnumerator.Next();
+                            break;
+                        case 0:
+                            yield return leftEnumerator.Current;
+                            leftState = leftEnumerator.Next();
+                            rightState = rightEnumerator.Next();
+                            break;
+                        case 1:
+                            yield return rightEnumerator.Current;
+                            rightState = rightEnumerator.Next();
+                            break;
                     }
                 }
 
-                while (outerEnumerator.HasCurrent)
+                while (leftState.HasCurrent)
                 {
-                    yield return outerEnumerator.Current;
-                    outerEnumerator.MoveNext();
+                    yield return leftEnumerator.Current;
+                    leftState = leftEnumerator.Next();
                 }
 
-                while (innerEnumerator.HasCurrent)
+                while (rightState.HasCurrent)
                 {
-                    yield return innerEnumerator.Current;
-                    innerEnumerator.MoveNext();
+                    yield return rightEnumerator.Current;
+                    rightState = rightEnumerator.Next();
                 }
             }
         }

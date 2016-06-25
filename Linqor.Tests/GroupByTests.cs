@@ -1,45 +1,37 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
 namespace Linqor.Tests
 {
     [TestFixture]
-    public class GroupByTests
+    public class GroupByTests : UnaryOperationTests<int, string>
     {
-        [TestCase(TestName = "GroupBy { 1, 2, 2, 3, 3, 3 }")]
-        public void GroupBy()
+        protected override IEnumerable<UnaryTestCase<int, string>> GetOperateCases()
         {
-            int[] source = { 1, 2, 2, 3, 3, 3 };
-
-            IGrouping<int, int>[] actual = source.OrderedGroupBy(i => i, (i1, i2) => i1.Equals(i2)).ToArray();
-
-            Assert.That(actual[0].Key, Is.EqualTo(1));
-            Assert.That(actual[0], Is.EqualTo(new[] { 1 }));
-
-            Assert.That(actual[1].Key, Is.EqualTo(2));
-            Assert.That(actual[1], Is.EqualTo(new[] { 2, 2 }));
-
-            Assert.That(actual[2].Key, Is.EqualTo(3));
-            Assert.That(actual[2], Is.EqualTo(new[] { 3, 3, 3 }));
+            var create = UnaryTestCase.GetCreator<int, string>("GroupBy");
+            return new[]
+            {
+                create(new int[] { }, new string[] { }),
+                create(new int[] { 1, 2, 2, 3, 3, 3 }, new[] { "1: { 1 }", "2: { 2, 2 }", "3: { 3, 3, 3 }" })
+            };
         }
 
-        [TestCase(TestName = "GroupBy ∞ { 1, 1, 2, 2, 3, 3 }")]
-        [Timeout(3000)]
-        public void GroupByInfinite()
+        protected override IEnumerable<UnaryTestCase<int, string>> GetOperateInfiniteCases()
         {
-            IEnumerable<int> source = TestCases.Generate(1, 2, 1);
+            var create = UnaryTestCase.GetCreator<int, string>("GroupBy ∞");
+            return new[] 
+            {
+                create(TestCases.Generate(1, 2, 1), new[] { "11: { 11, 11 }", "12: { 12, 12 }", "13: { 13, 13 }", "14: { 14, 14 }", "15: { 15, 15 }" })
+            };
+        }
 
-            IGrouping<int, int>[] actual = source.OrderedGroupBy(n => n, (i1, i2) => i1.Equals(i2)).Take(3).ToArray();
-
-            Assert.That(actual[0].Key, Is.EqualTo(1));
-            Assert.That(actual[0], Is.EqualTo(new[] { 1, 1 }));
-
-            Assert.That(actual[1].Key, Is.EqualTo(2));
-            Assert.That(actual[1], Is.EqualTo(new[] { 2, 2 }));
-
-            Assert.That(actual[2].Key, Is.EqualTo(3));
-            Assert.That(actual[2], Is.EqualTo(new[] { 3, 3 }));
+        protected override IEnumerable<string> Operate(IEnumerable<int> source, Func<int, int, bool> equal)
+        {
+            return source
+                .OrderedGroupBy(s => s, equal)
+                .Select(grouping => string.Format("{0}: {{ {1} }}", grouping.Key, string.Join(", ", grouping)));
         }
     }
 }

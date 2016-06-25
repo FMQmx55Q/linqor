@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Linqor.Tests
 {
-    public class DistinctTests : UnaryOperationTests
+    public class DistinctTests : UnaryOperationTests<int, int>
     {
-        protected override IEnumerable<UnaryTestCase<int>> GetOperateCases()
+        protected override IEnumerable<UnaryTestCase<int, int>> GetOperateCases()
         {
             var create = UnaryTestCase.GetCreator<int>("Distinct");
             return new[]
@@ -17,7 +17,7 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<UnaryTestCase<int>> GetOperateInfiniteCases()
+        protected override IEnumerable<UnaryTestCase<int, int>> GetOperateInfiniteCases()
         {
             var create = UnaryTestCase.GetCreator<int>("Distinct ∞");
             return new[]
@@ -27,7 +27,7 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<T> Operate<T>(IEnumerable<T> source, Func<T, T, bool> equal)
+        protected override IEnumerable<int> Operate(IEnumerable<int> source, Func<int, int, bool> equal)
         {
             return source.OrderedDistinct(equal);
         }

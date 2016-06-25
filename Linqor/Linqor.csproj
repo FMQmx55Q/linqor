@@ -35,7 +35,7 @@
   <ItemGroup>
     <Compile Include="Concat.cs" />
     <Compile Include="Distinct.cs" />
-    <Compile Include="EnumeratorWrapper.cs" />
+    <Compile Include="EnumeratorExtensions.cs" />
     <Compile Include="Except.cs" />
     <Compile Include="GroupBy.cs" />
     <Compile Include="Grouping.cs" />

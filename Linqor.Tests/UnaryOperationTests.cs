@@ -6,17 +6,17 @@ using NUnit.Framework;
 namespace Linqor.Tests
 {
     [TestFixture]
-    public abstract class UnaryOperationTests
+    public abstract class UnaryOperationTests<TSource, TExpected>
     {
         [TestCaseSource("GetOperateTestCases")]
-        public IEnumerable<int> OperateByEqual(IEnumerable<int> source)
+        public IEnumerable<TExpected> OperateByEqual(IEnumerable<TSource> source)
         {
             return Operate(source, (i1, i2) => i1.Equals(i2));
         }
 
         [TestCaseSource("GetOperateInfiniteTestCases")]
         [Timeout(3000)]
-        public IEnumerable<int> OperateInfiniteByEquals(IEnumerable<int> source)
+        public IEnumerable<TExpected> OperateInfiniteByEquals(IEnumerable<TSource> source)
         {
             return Operate(source, (i1, i2) => i1.Equals(i2)).Skip(10).Take(5);
         }
@@ -31,9 +31,9 @@ namespace Linqor.Tests
             return GetOperateInfiniteCases().ToTestCases();
         }
 
-        protected abstract IEnumerable<T> Operate<T>(IEnumerable<T> source, Func<T, T, bool> equal);
+        protected abstract IEnumerable<TExpected> Operate(IEnumerable<TSource> source, Func<TSource, TSource, bool> equal);
 
-        protected abstract IEnumerable<UnaryTestCase<int>> GetOperateCases();
-        protected abstract IEnumerable<UnaryTestCase<int>> GetOperateInfiniteCases();
+        protected abstract IEnumerable<UnaryTestCase<TSource, TExpected>> GetOperateCases();
+        protected abstract IEnumerable<UnaryTestCase<TSource, TExpected>> GetOperateInfiniteCases();
     }
 }

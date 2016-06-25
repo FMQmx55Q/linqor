@@ -9,27 +9,27 @@ namespace Linqor.Tests
         {
             return GetCreator<T, T, T>(name);
         }
-        public static Func<IEnumerable<TOuter>, IEnumerable<TInner>, IEnumerable<TExpected>, BinaryTestCase<TOuter, TInner, TExpected>> GetCreator<TOuter, TInner, TExpected>(string name)
+        public static Func<IEnumerable<TLeft>, IEnumerable<TRight>, IEnumerable<TExpected>, BinaryTestCase<TLeft, TRight, TExpected>> GetCreator<TLeft, TRight, TExpected>(string name)
         {
-            return (outer, inner, expected) => BinaryTestCase.Create<TOuter, TInner, TExpected>(name, outer, inner, expected);
+            return (left, right, expected) => BinaryTestCase.Create<TLeft, TRight, TExpected>(name, left, right, expected);
         }
 
-        public static BinaryTestCase<TOuter, TInner, TExpected> Create<TOuter, TInner, TExpected>(string name, IEnumerable<TOuter> outer, IEnumerable<TInner> inner, IEnumerable<TExpected> expected)
+        public static BinaryTestCase<TLeft, TRight, TExpected> Create<TLeft, TRight, TExpected>(string name, IEnumerable<TLeft> left, IEnumerable<TRight> right, IEnumerable<TExpected> expected)
         {
-            return new BinaryTestCase<TOuter, TInner, TExpected>
+            return new BinaryTestCase<TLeft, TRight, TExpected>
             {
                 Name = name,
-                Outer = outer,
-                Inner = inner,
+                Left = left,
+                Right = right,
                 Expected = expected
             };
         }
     }
-    public class BinaryTestCase<TOuter, TInner, TExpected>
+    public class BinaryTestCase<TLeft, TRight, TExpected>
     {
         public string Name;
-        public IEnumerable<TOuter> Outer;
-        public IEnumerable<TInner> Inner;
+        public IEnumerable<TLeft> Left;
+        public IEnumerable<TRight> Right;
         public IEnumerable<TExpected> Expected;
     }
 }

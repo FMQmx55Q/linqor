@@ -8,31 +8,30 @@ namespace Linqor
         /// <summary>
         /// Produces the set intersection of two ordered sequences.
         /// </summary>
-        public static IEnumerable<T> OrderedIntersect<T>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, T, int> compare)
+        public static IEnumerable<T> OrderedIntersect<T>(this IEnumerable<T> left, IEnumerable<T> right, Func<T, T, int> compare)
         {
-            using (var firstEnumerator = new EnumeratorWrapper<T>(first.GetEnumerator()))
-            using (var outerEnumerator = new EnumeratorWrapper<T>(second.GetEnumerator()))
+            Func<T, T, bool> equals = (l, r) => compare(l, r) == 0; 
+            using (var leftEnumerator = left.OrderedDistinct(equals).GetEnumerator())
+            using (var rightEnumerator = right.OrderedDistinct(equals).GetEnumerator())
             {
-                firstEnumerator.MoveNext();
-                outerEnumerator.MoveNext();
+                EnumeratorState<T> leftState = leftEnumerator.Next();
+                EnumeratorState<T> rightState = rightEnumerator.Next();
 
-                while (firstEnumerator.HasCurrent && outerEnumerator.HasCurrent)
+                while (leftState.HasCurrent && rightState.HasCurrent)
                 {
-                    int compareResult = compare(firstEnumerator.Current, outerEnumerator.Current);
-
-                    if (compareResult == 0)
+                    switch(compare(leftState.Current, rightState.Current))
                     {
-                        yield return firstEnumerator.Current;
-                        firstEnumerator.MoveNext();
-                        outerEnumerator.MoveNext();
-                    }
-                    else if (compareResult > 0)
-                    {
-                        outerEnumerator.MoveNext();
-                    }
-                    else
-                    {
-                        firstEnumerator.MoveNext();
+                        case -1:
+                            leftState = leftEnumerator.Next();
+                            break;
+                        case 0:
+                            yield return leftEnumerator.Current;
+                            leftState = leftEnumerator.Next();
+                            rightState = rightEnumerator.Next();
+                            break;
+                        case 1:
+                            rightState = rightEnumerator.Next();
+                            break;
                     }
                 }
             }

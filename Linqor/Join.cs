@@ -8,65 +8,51 @@ namespace Linqor
         /// <summary>
         /// Correlates the elements of two ordered sequences based on matching keys.
         /// </summary>
-        public static IEnumerable<TResult> OrderedJoin<TOuter, TInner, TKey, TResult>(
-            this IEnumerable<TOuter> outer,
-            IEnumerable<TInner> inner,
-            Func<TOuter, TKey> outerKeySelector,
-            Func<TInner, TKey> innerKeySelector,
-            Func<TOuter, TInner, TResult> resultSelector,
+        public static IEnumerable<TResult> OrderedJoin<TLeft, TRight, TKey, TResult>(
+            this IEnumerable<TLeft> left,
+            IEnumerable<TRight> right,
+            Func<TLeft, TKey> leftKeySelector,
+            Func<TRight, TKey> rightKeySelector,
+            Func<TLeft, TRight, TResult> resultSelector,
             Func<TKey, TKey, int> compare)
         {
-            using (var outerEnumerator = new EnumeratorWrapper<TOuter>(outer.GetEnumerator()))
-            using (var innerEnumerator = new EnumeratorWrapper<TInner>(inner.GetEnumerator()))
+            using (var leftEnumerator = left.GetEnumerator())
+            using (var rightEnumerator = right.GetEnumerator())
             {
-                outerEnumerator.MoveNext();
-                innerEnumerator.MoveNext();
+                EnumeratorState<TLeft> leftState = leftEnumerator.Next();
+                EnumeratorState<TRight> rightState = rightEnumerator.Next();
                 
-                while (outerEnumerator.HasCurrent)
+                while (leftState.HasCurrent && rightState.HasCurrent)
                 {
-                    List<TInner> innerGroup = new List<TInner>();
-                    
-                    while(innerEnumerator.HasCurrent)
+                    switch(compare(leftKeySelector(leftState.Current), rightKeySelector(rightState.Current)))
                     {
-                        int compareResult = compare(outerKeySelector(outerEnumerator.Current), innerKeySelector(innerEnumerator.Current));
-                        if (compareResult == 0)
-                        {
-                            innerGroup.Add(innerEnumerator.Current);
-                            
-                            yield return resultSelector(outerEnumerator.Current, innerEnumerator.Current);                            
+                        case -1:
+                            leftState = leftEnumerator.Next();
+                            break;
+                        case 0:
+                            yield return resultSelector(leftState.Current, rightState.Current);
 
-                            innerEnumerator.MoveNext();
-                        }
-                        else if (compareResult > 0)
-                        {
-                            innerEnumerator.MoveNext();
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    
-                    TOuter previous = outerEnumerator.Current;
-                    outerEnumerator.MoveNext();
-                    
-                    while(outerEnumerator.HasCurrent)
-                    {
-                        int compareResult = compare(outerKeySelector(outerEnumerator.Current), outerKeySelector(previous));
-                        if (compareResult == 0)
-                        {
-                            foreach (TInner item in innerGroup)
+                            List<TRight> rightGroup = new List<TRight> { rightState.Current };
+
+                            TKey currentRightKey = rightKeySelector(rightState.Current);
+                            foreach(TRight rightItem in rightEnumerator.TakeWhile(current => compare(currentRightKey, rightKeySelector(current)) == 0, last => rightState = last))
                             {
-                                yield return resultSelector(outerEnumerator.Current, item);
+                                rightGroup.Add(rightItem);
+                                yield return resultSelector(leftState.Current, rightItem);
                             }
-                            
-                            previous = outerEnumerator.Current;
-                            outerEnumerator.MoveNext();
-                        }
-                        else
-                        {
+
+                            TKey currentLeftKey = leftKeySelector(leftState.Current);
+                            foreach (var leftItem in leftEnumerator.TakeWhile(current => compare(currentLeftKey, leftKeySelector(current)) == 0, last => leftState = last))
+                            {
+                                foreach(TRight rightItem in rightGroup)
+                                {
+                                    yield return resultSelector(leftItem, rightItem);
+                                }
+                            }
                             break;
-                        }
+                        case 1:
+                            rightState = rightEnumerator.Next();
+                            break;
                     }
                 }
             }

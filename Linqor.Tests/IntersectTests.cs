@@ -6,18 +6,25 @@ namespace Linqor.Tests
     {
         protected override IEnumerable<BinaryTestCase<int, int, int>> GetOperateCases()
         {
-            const string name = "Intersect";
+            var create = BinaryTestCase.GetCreator<int>("Intersect");
             return new[]
             {
-                BinaryTestCase.Create(name, new int[] { }, new int[] { }, new int[] { }),
-                BinaryTestCase.Create(name, new int[] { }, new int[] { 1, 2, 3, 4, 5 }, new int[] { }),
-                BinaryTestCase.Create(name, new int[] { 1, 2, 3, 4, 5 }, new int[] { }, new int[] { }),
-                BinaryTestCase.Create(name, new int[] { 1, 2, 3, 4, 5 }, new int[] { 5, 6, 7 }, new int[] { 5 }),
-                BinaryTestCase.Create(name, new int[] { 1, 2, 3 }, new int[] { 3, 4, 5, 6, 7 }, new int[] { 3 }),
-                BinaryTestCase.Create(name, new int[] { 1, 3, 5, 7, 9 }, new int[] { 2, 4, 6, 8 }, new int[] { }),
-                BinaryTestCase.Create(name, new int[] { 1, 2, 3, 4, 5 }, new int[] { 2, 3, 4, 5, 6 }, new int[] { 2, 3, 4, 5 }),
-                BinaryTestCase.Create(name, new int[] { 5, 1, 4, 2, 3 }, new int[] { 2, 6, 5, 3, 4 }, new int[] { }),
-                BinaryTestCase.Create(name, new int[] { 5, 4, 3, 2, 1 }, new int[] { 6, 5, 4, 3, 2 }, new int[] { })
+                create(new int[] { }, new int[] { }, new int[] { }),
+                create(new int[] { 0, 1, 2 }, new int[] { }, new int[] { }),
+                create(new int[] { }, new int[] { 0, 1, 2 }, new int[] { }),
+                
+                create(new int[] { 0 }, new int[] { 0 }, new int[] { 0 }),
+                create(new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }),
+
+                create(new int[] { 0, 1, 2, 2, 3, 3, 3, 4 }, new int[] { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 }, new int[] { 0, 1, 2, 3, 4 }),
+                
+                create(new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new int[] { 2 }),
+                create(new int[] { 2, 3, 4 }, new int[] { 0, 1, 2 }, new int[] { 2 }),
+
+                create(new int[] { 0, 0, 1, 2, 2 }, new int[] { 0, 1, 1, 2 }, new int[] { 0, 1, 2 }),
+                create(new int[] { 0, 0, 1, 3, 3 }, new int[] { 1, 1, 2, 2, 3 }, new int[] { 1, 3 }),
+            
+                create(new int[] { 1, 3, 5, 7, 9 }, new int[] { 2, 4, 6, 8 }, new int[] { }),
             };
         }
 
@@ -27,9 +34,9 @@ namespace Linqor.Tests
             yield return BinaryTestCase.Create(name, TestCases.Generate(1, 1, 2), TestCases.Generate(5, 1, 2), new[] { 25, 27, 29, 31, 33 });
         }
 
-        protected override IEnumerable<int> Operate(IEnumerable<int> outer, IEnumerable<int> inner)
+        protected override IEnumerable<int> Operate(IEnumerable<int> left, IEnumerable<int> right)
         {
-            return outer.OrderedIntersect(inner, (o, i) => o.CompareTo(i));
+            return left.OrderedIntersect(right, (l, r) => l.CompareTo(r));
         }
     }
 }

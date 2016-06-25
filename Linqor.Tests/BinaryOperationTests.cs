@@ -5,19 +5,19 @@ using NUnit.Framework;
 namespace Linqor.Tests
 {
     [TestFixture]
-    public abstract class BinaryOperationTests<TOuter, TInner, TExpected>
+    public abstract class BinaryOperationTests<TLeft, TRight, TExpected>
     {
         [TestCaseSource("GetOperateTestCases")]
-        public IEnumerable<TExpected> OperateByCompare(IEnumerable<TOuter> outer, IEnumerable<TInner> inner)
+        public IEnumerable<TExpected> OperateByCompare(IEnumerable<TLeft> left, IEnumerable<TRight> right)
         {
-            return Operate(outer, inner);
+            return Operate(left, right).ToArray();
         }
 
         [TestCaseSource("GetOperateInfiniteTestCases")]
         [Timeout(3000)]
-        public IEnumerable<TExpected> OperateInfiniteByCompare(IEnumerable<TOuter> outer, IEnumerable<TInner> inner)
+        public IEnumerable<TExpected> OperateInfiniteByCompare(IEnumerable<TLeft> left, IEnumerable<TRight> right)
         {
-            return Operate(outer, inner).Skip(10).Take(5).ToArray();
+            return Operate(left, right).Skip(10).Take(5).ToArray();
         }
 
         protected IEnumerable<ITestCaseData> GetOperateTestCases()
@@ -30,9 +30,9 @@ namespace Linqor.Tests
             return GetOperateInfiniteCases().ToTestCases();
         }
 
-        protected abstract IEnumerable<BinaryTestCase<TOuter, TInner, TExpected>> GetOperateCases();
-        protected abstract IEnumerable<BinaryTestCase<TOuter, TInner, TExpected>> GetOperateInfiniteCases();
+        protected abstract IEnumerable<BinaryTestCase<TLeft, TRight, TExpected>> GetOperateCases();
+        protected abstract IEnumerable<BinaryTestCase<TLeft, TRight, TExpected>> GetOperateInfiniteCases();
 
-        protected abstract IEnumerable<TExpected> Operate(IEnumerable<TOuter> outer, IEnumerable<TInner> inner);
+        protected abstract IEnumerable<TExpected> Operate(IEnumerable<TLeft> left, IEnumerable<TRight> right);
     }
 }

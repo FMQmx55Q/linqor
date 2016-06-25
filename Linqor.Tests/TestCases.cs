@@ -6,19 +6,14 @@ namespace Linqor.Tests
 {
     public static class TestCases
     {
-        public static IEnumerable<ITestCaseData> ToTestCases<T>(this IEnumerable<UnaryTestCase<T>> testCases)
+        public static IEnumerable<ITestCaseData> ToTestCases<TSource, TExpected>(this IEnumerable<UnaryTestCase<TSource, TExpected>> testCases)
         {
             return testCases.Select(testCase => CreateUnary(testCase.Name, testCase.Source, testCase.Expected));
         }
-
-        public static IEnumerable<ITestCaseData> ToTestCases<T>(this IEnumerable<BinaryTestCase<T, T, T>> testCases)
-        {
-            return testCases.Select(testCase => CreateBinary<T>(testCase.Name, testCase.Outer, testCase.Inner, testCase.Expected));
-        }
         
-        public static IEnumerable<ITestCaseData> ToTestCases<TOuter, TInner, TExpected>(this IEnumerable<BinaryTestCase<TOuter, TInner, TExpected>> testCases)
+        public static IEnumerable<ITestCaseData> ToTestCases<TLeft, TRight, TExpected>(this IEnumerable<BinaryTestCase<TLeft, TRight, TExpected>> testCases)
         {
-            return testCases.Select(testCase => CreateBinary(testCase.Name, testCase.Outer, testCase.Inner, testCase.Expected));
+            return testCases.Select(testCase => CreateBinary(testCase.Name, testCase.Left, testCase.Right, testCase.Expected));
         }
 
         public static IEnumerable<int> Generate(int start, int count, int step)
@@ -33,23 +28,18 @@ namespace Linqor.Tests
             }
         }
 
-        private static ITestCaseData CreateUnary<T>(string name, IEnumerable<T> source, IEnumerable<T> expected)
+        private static ITestCaseData CreateUnary<TSource, TExpected>(string name, IEnumerable<TSource> source, IEnumerable<TExpected> expected)
         {
             string details = string.Format(" {{ {0} }}", string.Join(", ", source.Take(10)));
 
             return new TestCaseData(source).Returns(expected).SetName(name + details);
         }
-        
-        private static ITestCaseData CreateBinary<T>(string name, IEnumerable<T> outer, IEnumerable<T> inner, IEnumerable<T> expected)
-        {
-            return CreateBinary<T>(name, outer, inner, expected);
-        }
 
-        private static ITestCaseData CreateBinary<TOuter, TInner, TExpected>(string name, IEnumerable<TOuter> outer, IEnumerable<TInner> inner, IEnumerable<TExpected> expected)
+        private static ITestCaseData CreateBinary<TLeft, TRight, TExpected>(string name, IEnumerable<TLeft> left, IEnumerable<TRight> right, IEnumerable<TExpected> expected)
         {
-            string details = string.Format(" {{ {0} }} {{ {1} }}", string.Join(", ", outer.Take(10)), string.Join(", ", inner.Take(10)));
+            string details = string.Format(" {{ {0} }} {{ {1} }}", string.Join(", ", left.Take(10)), string.Join(", ", right.Take(10)));
 
-            return new TestCaseData(outer, inner).Returns(expected).SetName(name + details);
+            return new TestCaseData(left, right).Returns(expected).SetName(name + details);
         }
     }
 }
