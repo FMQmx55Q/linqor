@@ -39,7 +39,12 @@ namespace Linqor.Tests
 
         protected override IEnumerable<string> Operate(IEnumerable<int> left, IEnumerable<int> right)
         {
-            return left.OrderedJoin(right, l => l, r => r, (l, r) => l + " " + r, (l, r) => l.CompareTo(r));
+            return left
+                .AsOrderedBy(l => l)
+                .Join(
+                    right.AsOrderedBy(r => r),
+                    (l, r) => l + " " + r,
+                    (l, r) => l.CompareTo(r));
         }
     }
 }

@@ -30,7 +30,8 @@ namespace Linqor.Tests
         protected override IEnumerable<string> Operate(IEnumerable<int> source, Func<int, int, bool> equal)
         {
             return source
-                .OrderedGroupBy(s => s, equal)
+                .AsOrderedBy(s => s)
+                .GroupBy(equal)
                 .Select(grouping => string.Format("{0}: {{ {1} }}", grouping.Key, string.Join(", ", grouping)));
         }
     }

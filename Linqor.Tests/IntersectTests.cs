@@ -36,7 +36,11 @@ namespace Linqor.Tests
 
         protected override IEnumerable<int> Operate(IEnumerable<int> left, IEnumerable<int> right)
         {
-            return left.OrderedIntersect(right, (l, r) => l.CompareTo(r));
+            return left
+                .AsOrderedBy(l => l)
+                .Intersect(
+                    right.AsOrderedBy(r => r),
+                    (l, r) => l.CompareTo(r));
         }
     }
 }

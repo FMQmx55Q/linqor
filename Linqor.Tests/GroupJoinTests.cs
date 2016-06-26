@@ -40,9 +40,12 @@ namespace Linqor.Tests
 
         protected override IEnumerable<string> Operate(IEnumerable<int> left, IEnumerable<int> right)
         {
-            return left.OrderedGroupJoin(right, t => t, t => t,
-                (l, r) => string.Format("{0} {{ {1} }}", l, string.Join(", ", r)),
-                (l, r) => l.CompareTo(r));
+            return left
+                .AsOrderedBy(l => l)
+                .GroupJoin(
+                    right.AsOrderedBy(r => r),
+                    (l, r) => string.Format("{0} {{ {1} }}", l, string.Join(", ", r)),
+                    (l, r) => l.CompareTo(r));
         }
     }
 }

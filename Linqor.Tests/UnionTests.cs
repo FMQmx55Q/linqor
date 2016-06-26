@@ -34,7 +34,11 @@ namespace Linqor.Tests
 
         protected override IEnumerable<int> Operate(IEnumerable<int> left, IEnumerable<int> right)
         {
-            return left.OrderedUnion(right, (l, r) => l.CompareTo(r));
+            return left
+                .AsOrderedBy(l => l)
+                .Union(
+                    right.AsOrderedBy(r => r),
+                    (l, r) => l.CompareTo(r));
         }
     }
 }

@@ -33,6 +33,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsOrderedBy.cs" />
     <Compile Include="Concat.cs" />
     <Compile Include="Distinct.cs" />
     <Compile Include="EnumeratorExtensions.cs" />

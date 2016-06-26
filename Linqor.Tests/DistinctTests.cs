@@ -29,7 +29,7 @@ namespace Linqor.Tests
 
         protected override IEnumerable<int> Operate(IEnumerable<int> source, Func<int, int, bool> equal)
         {
-            return source.OrderedDistinct(equal);
+            return source.AsOrderedBy(s => s).Distinct(equal);
         }
     }
 }

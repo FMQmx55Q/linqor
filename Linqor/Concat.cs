@@ -3,22 +3,22 @@ using System.Collections.Generic;
 
 namespace Linqor
 {
-    public static class Concat
+    public static partial class Extensions
     {
         /// <summary>
         /// Concatenates two ordered sequences.
         /// </summary>
-        public static IEnumerable<T> OrderedConcat<T>(this IEnumerable<T> left, IEnumerable<T> right, Func<T, T, int> compare)
+        public static IEnumerable<T> Concat<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right, Func<TKey, TKey, int> compare)
         {
-            using (var leftEnumerator = left.GetEnumerator())
-            using (var rightEnumerator = right.GetEnumerator())
+            using (var leftEnumerator = left.Source.GetEnumerator())
+            using (var rightEnumerator = right.Source.GetEnumerator())
             {
                 EnumeratorState<T> leftState = leftEnumerator.Next();
                 EnumeratorState<T> rightState = rightEnumerator.Next();
 
                 while (leftState.HasCurrent && rightState.HasCurrent)
                 {
-                    switch(compare(leftState.Current, rightState.Current))
+                    switch(compare(left.KeySelector(leftState.Current), right.KeySelector(rightState.Current)))
                     {
                         case -1:
                             yield return leftState.Current;
@@ -26,13 +26,13 @@ namespace Linqor
                             break;
                         case 0:
                             yield return leftState.Current;
-                            foreach(T item in leftEnumerator.TakeWhile(current => compare(leftState.Current, current) == 0, last => leftState = last))
+                            foreach(T item in leftEnumerator.TakeWhile(current => compare(left.KeySelector(leftState.Current), left.KeySelector(current)) == 0, last => leftState = last))
                             {
                                 yield return item;
                             }
 
                             yield return rightEnumerator.Current;
-                            foreach(T item in rightEnumerator.TakeWhile(current => compare(rightState.Current, current) == 0, last => rightState = last))
+                            foreach(T item in rightEnumerator.TakeWhile(current => compare(right.KeySelector(rightState.Current), right.KeySelector(current)) == 0, last => rightState = last))
                             {
                                 yield return item;
                             }
