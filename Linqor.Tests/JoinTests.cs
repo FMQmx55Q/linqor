@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Linqor.Tests
@@ -6,7 +7,7 @@ namespace Linqor.Tests
     [TestFixture]
     public class JoinTests : BinaryOperationTests<int, int, string>
     {
-        protected override IEnumerable<BinaryTestCase<int, int, string>> GetOperateCases()
+        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateCases()
         {
             var create = BinaryTestCase.GetCreator<int, int, string>("Join");
             return new[]
@@ -28,7 +29,7 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
+        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
         {
             var create = BinaryTestCase.GetCreator<int, int, string>("Join ∞");
             return new[]
@@ -37,13 +38,20 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<string> Operate(IEnumerable<int> left, IEnumerable<int> right)
+        protected override IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetOperations()
         {
-            return left.ToEntities("L").AsOrderedBy(l => l.Value)
-                .Join(
-                    right.ToEntities("R").AsOrderedBy(r => r.Value),
-                    (l, r) => l.Key + " " + r.Key,
-                    (l, r) => l.CompareTo(r));
+            return new Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>[]
+            {
+                (left, right) =>  left.ToEntities("L").AsOrderedBy(l => l.Value)
+                    .Join(
+                        right.ToEntities("R").AsOrderedBy(r => r.Value),
+                        (l, r) => l.Key + " " + r.Key,
+                        (l, r) => l.CompareTo(r)),
+                (left, right) => left.ToEntities("L").AsOrderedBy(l => l.Value)
+                    .Join(
+                        right.ToEntities("R").AsOrderedBy(r => r.Value),
+                        (l, r) => l.Key + " " + r.Key)
+            };
         }
     }
 }

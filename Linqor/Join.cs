@@ -11,6 +11,18 @@ namespace Linqor
         public static IEnumerable<TResult> Join<TLeft, TRight, TKey, TResult>(
             this OrderedEnumerable<TLeft, TKey> left,
             OrderedEnumerable<TRight, TKey> right,
+            Func<TLeft, TRight, TResult> resultSelector)
+            where TKey : IComparable<TKey>
+        {
+            return left.Join(right, resultSelector, (l, r) => l.CompareTo(r));
+        }
+        
+        /// <summary>
+        /// Correlates the elements of two ordered sequences based on matching keys.
+        /// </summary>
+        public static IEnumerable<TResult> Join<TLeft, TRight, TKey, TResult>(
+            this OrderedEnumerable<TLeft, TKey> left,
+            OrderedEnumerable<TRight, TKey> right,
             Func<TLeft, TRight, TResult> resultSelector,
             Func<TKey, TKey, int> compare)
         {

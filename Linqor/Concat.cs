@@ -8,6 +8,15 @@ namespace Linqor
         /// <summary>
         /// Concatenates two ordered sequences.
         /// </summary>
+        public static IEnumerable<T> Concat<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right)
+            where TKey : IComparable<TKey>
+        {
+            return left.Concat(right, (l, r) => l.CompareTo(r));
+        }
+        
+        /// <summary>
+        /// Concatenates two ordered sequences.
+        /// </summary>
         public static IEnumerable<T> Concat<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right, Func<TKey, TKey, int> compare)
         {
             using (var leftEnumerator = left.Source.GetEnumerator())

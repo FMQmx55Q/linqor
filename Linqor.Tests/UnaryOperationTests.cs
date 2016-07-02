@@ -9,31 +9,33 @@ namespace Linqor.Tests
     public abstract class UnaryOperationTests<TSource, TExpected>
     {
         [TestCaseSource("GetOperateTestCases")]
-        public IEnumerable<TExpected> OperateByEqual(IEnumerable<TSource> source)
+        public IEnumerable<TExpected> OperateByEqual(IEnumerable<TSource> source, Func<IEnumerable<TSource>, IEnumerable<TExpected>> operate)
         {
-            return Operate(source, (i1, i2) => i1.Equals(i2));
+            return operate(source);
         }
 
         [TestCaseSource("GetOperateInfiniteTestCases")]
         [Timeout(3000)]
-        public IEnumerable<TExpected> OperateInfiniteByEquals(IEnumerable<TSource> source)
+        public IEnumerable<TExpected> OperateInfiniteByEquals(IEnumerable<TSource> source, Func<IEnumerable<TSource>, IEnumerable<TExpected>> operate)
         {
-            return Operate(source, (i1, i2) => i1.Equals(i2)).Skip(10).Take(5);
+            return operate(source).Skip(10).Take(5);
         }
 
         protected IEnumerable<ITestCaseData> GetOperateTestCases()
         {
-            return GetOperateCases().ToTestCases();
+            return GetOperations()
+                .SelectMany(GetOperateCases().ToTestCases);
         }
 
         protected IEnumerable<ITestCaseData> GetOperateInfiniteTestCases()
         {
-            return GetOperateInfiniteCases().ToTestCases();
+            return GetOperations()
+                .SelectMany(GetOperateInfiniteCases().ToTestCases);
         }
 
-        protected abstract IEnumerable<TExpected> Operate(IEnumerable<TSource> source, Func<TSource, TSource, bool> equal);
+        protected abstract IReadOnlyList<UnaryTestCase<TSource, TExpected>> GetOperateCases();
+        protected abstract IReadOnlyList<UnaryTestCase<TSource, TExpected>> GetOperateInfiniteCases();
 
-        protected abstract IEnumerable<UnaryTestCase<TSource, TExpected>> GetOperateCases();
-        protected abstract IEnumerable<UnaryTestCase<TSource, TExpected>> GetOperateInfiniteCases();
+        protected abstract IReadOnlyList<Func<IEnumerable<TSource>, IEnumerable<TExpected>>> GetOperations();
     }
 }

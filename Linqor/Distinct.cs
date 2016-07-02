@@ -8,6 +8,15 @@ namespace Linqor
         /// <summary>
         /// Returns distinct elements from an ordered sequence.
         /// </summary>
+        public static IEnumerable<T> Distinct<T, TKey>(this OrderedEnumerable<T, TKey> source)
+            where TKey : IEquatable<TKey> 
+        {
+            return source.Distinct((l, r) => l.Equals(r));
+        }
+
+        /// <summary>
+        /// Returns distinct elements from an ordered sequence.
+        /// </summary>
         public static IEnumerable<T> Distinct<T, TKey>(this OrderedEnumerable<T, TKey> source, Func<TKey, TKey, bool> equals)
         {
             using (var enumerator = source.Source.GetEnumerator())

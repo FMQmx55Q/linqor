@@ -8,7 +8,7 @@ namespace Linqor.Tests
     [TestFixture]
     public class GroupByTests : UnaryOperationTests<int, string>
     {
-        protected override IEnumerable<UnaryTestCase<int, string>> GetOperateCases()
+        protected override IReadOnlyList<UnaryTestCase<int, string>> GetOperateCases()
         {
             var create = UnaryTestCase.GetCreator<int, string>("GroupBy");
             return new[]
@@ -18,7 +18,7 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<UnaryTestCase<int, string>> GetOperateInfiniteCases()
+        protected override IReadOnlyList<UnaryTestCase<int, string>> GetOperateInfiniteCases()
         {
             var create = UnaryTestCase.GetCreator<int, string>("GroupBy ∞");
             return new[] 
@@ -27,11 +27,17 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<string> Operate(IEnumerable<int> source, Func<int, int, bool> equal)
+        protected override IReadOnlyList<Func<IEnumerable<int>, IEnumerable<string>>> GetOperations()
         {
-            return source.ToEntities("S").AsOrderedBy(s => s.Value)
-                .GroupBy(equal)
-                .Select(grouping => string.Format("{0}: {{ {1} }}", grouping.Key, string.Join(", ", grouping.Select(g => g.Key))));
+            return new Func<IEnumerable<int>, IEnumerable<string>>[]
+            {
+                (source) => source.ToEntities("S").AsOrderedBy(s => s.Value)
+                    .GroupBy((l, r) => l.Equals(r))
+                    .Select(grouping => string.Format("{0}: {{ {1} }}", grouping.Key, string.Join(", ", grouping.Select(g => g.Key)))),
+                (source) => source.ToEntities("S").AsOrderedBy(s => s.Value)
+                    .GroupBy()
+                    .Select(grouping => string.Format("{0}: {{ {1} }}", grouping.Key, string.Join(", ", grouping.Select(g => g.Key))))
+            };
         }
     }
 }

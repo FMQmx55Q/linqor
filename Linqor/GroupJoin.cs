@@ -6,6 +6,21 @@ namespace Linqor
 {
     public static partial class Extensions
     {
+        /// <summary>
+        /// Correlates the elements of two ordered sequences based on key equality, and groups the results.
+        /// </summary>
+        public static IEnumerable<TResult> GroupJoin<TLeft, TRight, TKey, TResult>(
+            this OrderedEnumerable<TLeft, TKey> left,
+            OrderedEnumerable<TRight, TKey> right,
+            Func<TLeft, IReadOnlyList<TRight>, TResult> resultSelector)
+            where TKey : IComparable<TKey>
+        {
+            return left.GroupJoin(right, resultSelector, (l, r) => l.CompareTo(r));
+        }
+
+        /// <summary>
+        /// Correlates the elements of two ordered sequences based on key equality, and groups the results.
+        /// </summary>
         public static IEnumerable<TResult> GroupJoin<TLeft, TRight, TKey, TResult>(
             this OrderedEnumerable<TLeft, TKey> left,
             OrderedEnumerable<TRight, TKey> right,

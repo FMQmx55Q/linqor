@@ -6,7 +6,7 @@ namespace Linqor.Tests
 {
     public class DistinctTests : UnaryOperationTests<int, string>
     {
-        protected override IEnumerable<UnaryTestCase<int, string>> GetOperateCases()
+        protected override IReadOnlyList<UnaryTestCase<int, string>> GetOperateCases()
         {
             var create = UnaryTestCase.GetCreator<int, string>("Distinct");
             return new[]
@@ -18,7 +18,7 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<UnaryTestCase<int, string>> GetOperateInfiniteCases()
+        protected override IReadOnlyList<UnaryTestCase<int, string>> GetOperateInfiniteCases()
         {
             var create = UnaryTestCase.GetCreator<int, string>("Distinct ∞");
             return new[]
@@ -28,11 +28,17 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<string> Operate(IEnumerable<int> source, Func<int, int, bool> equal)
+        protected override IReadOnlyList<Func<IEnumerable<int>, IEnumerable<string>>> GetOperations()
         {
-            return source.ToEntities("S").AsOrderedBy(s => s.Value)
-                .Distinct(equal)
-                .Select(e => e.Key);
+            return new Func<IEnumerable<int>, IEnumerable<string>>[]
+            {
+                (source) => source.ToEntities("S").AsOrderedBy(s => s.Value)
+                    .Distinct((l, r) => l.Equals(r))
+                    .Select(e => e.Key),
+                (source) => source.ToEntities("S").AsOrderedBy(s => s.Value)
+                    .Distinct()
+                    .Select(e => e.Key)
+            };
         }
     }
 }

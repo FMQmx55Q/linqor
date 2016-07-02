@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Linqor.Tests
 {
     public class IntersectTests : BinaryOperationTests<int, int, string>
     {
-        protected override IEnumerable<BinaryTestCase<int, int, string>> GetOperateCases()
+        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateCases()
         {
             var create = BinaryTestCase.GetCreator<int, int, string>("Intersect");
             return new[]
@@ -29,19 +30,29 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
+        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
         {
             const string name = "Intersect ∞";
-            yield return BinaryTestCase.Create(name, Extensions.Generate(1, 1, 2), Extensions.Generate(5, 1, 2), new string[] { "L-12-25", "L-13-27", "L-14-29", "L-15-31", "L-16-33" });
+            return new[]
+            {
+                BinaryTestCase.Create(name, Extensions.Generate(1, 1, 2), Extensions.Generate(5, 1, 2), new string[] { "L-12-25", "L-13-27", "L-14-29", "L-15-31", "L-16-33" })
+            };
         }
 
-        protected override IEnumerable<string> Operate(IEnumerable<int> left, IEnumerable<int> right)
+        protected override IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetOperations()
         {
-            return left.ToEntities("L").AsOrderedBy(l => l.Value)
-                .Intersect(
-                    right.ToEntities("R").AsOrderedBy(r => r.Value),
-                    (l, r) => l.CompareTo(r))
-                .Select(e => e.Key);
+            return new Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>[]
+            {
+                (left, right) => left.ToEntities("L").AsOrderedBy(l => l.Value)
+                        .Intersect(
+                            right.ToEntities("R").AsOrderedBy(r => r.Value),
+                            (l, r) => l.CompareTo(r))
+                        .Select(e => e.Key),
+                (left, right) => left.ToEntities("L").AsOrderedBy(l => l.Value)
+                        .Intersect(
+                            right.ToEntities("R").AsOrderedBy(r => r.Value))
+                        .Select(e => e.Key)
+            };
         }
     }
 }

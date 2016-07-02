@@ -19,5 +19,14 @@ namespace Linqor
                 KeySelector = keySelector
             };
         }
+
+        public static OrderedEnumerable<T, T> AsOrderedBy<T>(this IEnumerable<T> source)
+        {
+            return new OrderedEnumerable<T, T>
+            {
+                Source = source,
+                KeySelector = s => s
+            };
+        }
     }    
 }

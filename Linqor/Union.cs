@@ -8,6 +8,15 @@ namespace Linqor
         /// <summary>
         /// Produces the set union of two ordered sequences.
         /// </summary>
+        public static IEnumerable<T> Union<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right)
+            where TKey : IComparable<TKey>
+        {
+            return left.Union(right, (l, r) => l.CompareTo(r));
+        }
+        
+        /// <summary>
+        /// Produces the set union of two ordered sequences.
+        /// </summary>
         public static IEnumerable<T> Union<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right, Func<TKey, TKey, int> compare)
         {
             Func<TKey, TKey, bool> equals = (l, r) => compare(l, r) == 0; 

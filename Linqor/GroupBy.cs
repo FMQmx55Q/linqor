@@ -9,6 +9,15 @@ namespace Linqor
         /// <summary>
         /// Groups the elements of an ordered sequence.
         /// </summary>
+        public static IEnumerable<IGrouping<TKey, T>> GroupBy<T, TKey>(this OrderedEnumerable<T, TKey> source)
+            where TKey : IEquatable<TKey> 
+        {
+            return source.GroupBy((l, r) => l.Equals(r));
+        }
+        
+        /// <summary>
+        /// Groups the elements of an ordered sequence.
+        /// </summary>
         public static IEnumerable<IGrouping<TKey, T>> GroupBy<T, TKey>(this OrderedEnumerable<T, TKey> source, Func<TKey, TKey, bool> equals)
         {
             using (var enumerator = source.Source.GetEnumerator())

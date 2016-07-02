@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
 
@@ -6,14 +7,14 @@ namespace Linqor.Tests
 {
     public static class Extensions
     {
-        public static IEnumerable<ITestCaseData> ToTestCases<TSource, TExpected>(this IEnumerable<UnaryTestCase<TSource, TExpected>> testCases)
+        public static IEnumerable<ITestCaseData> ToTestCases<TSource, TExpected>(this IEnumerable<UnaryTestCase<TSource, TExpected>> testCases, Func<IEnumerable<TSource>, IEnumerable<TExpected>> operate)
         {
-            return testCases.Select(testCase => CreateUnary(testCase.Name, testCase.Source, testCase.Expected));
+            return testCases.Select(testCase => CreateUnary(testCase.Name, testCase.Source, testCase.Expected, operate));
         }
         
-        public static IEnumerable<ITestCaseData> ToTestCases<TLeft, TRight, TExpected>(this IEnumerable<BinaryTestCase<TLeft, TRight, TExpected>> testCases)
+        public static IEnumerable<ITestCaseData> ToTestCases<TLeft, TRight, TExpected>(this IEnumerable<BinaryTestCase<TLeft, TRight, TExpected>> testCases, Func<IEnumerable<TLeft>, IEnumerable<TRight>, IEnumerable<TExpected>> operate)
         {
-            return testCases.Select(testCase => CreateBinary(testCase.Name, testCase.Left, testCase.Right, testCase.Expected));
+            return testCases.Select(testCase => CreateBinary(testCase.Name, testCase.Left, testCase.Right, testCase.Expected, operate));
         }
 
         public static IEnumerable<int> Generate(int start, int repeat, int step)
@@ -28,18 +29,18 @@ namespace Linqor.Tests
             }
         }
 
-        private static ITestCaseData CreateUnary<TSource, TExpected>(string name, IEnumerable<TSource> source, IEnumerable<TExpected> expected)
+        private static ITestCaseData CreateUnary<TSource, TExpected>(string name, IEnumerable<TSource> source, IEnumerable<TExpected> expected, Func<IEnumerable<TSource>, IEnumerable<TExpected>> operate)
         {
             string details = string.Format(" {{ {0} }}", string.Join(", ", source.Take(10)));
 
-            return new TestCaseData(source).Returns(expected).SetName(name + details);
+            return new TestCaseData(source, operate).Returns(expected).SetName(name + details);
         }
 
-        private static ITestCaseData CreateBinary<TLeft, TRight, TExpected>(string name, IEnumerable<TLeft> left, IEnumerable<TRight> right, IEnumerable<TExpected> expected)
+        private static ITestCaseData CreateBinary<TLeft, TRight, TExpected>(string name, IEnumerable<TLeft> left, IEnumerable<TRight> right, IEnumerable<TExpected> expected, Func<IEnumerable<TLeft>, IEnumerable<TRight>, IEnumerable<TExpected>> operate)
         {
             string details = string.Format(" {{ {0} }} {{ {1} }}", string.Join(", ", left.Take(10)), string.Join(", ", right.Take(10)));
 
-            return new TestCaseData(left, right).Returns(expected).SetName(name + details);
+            return new TestCaseData(left, right, operate).Returns(expected).SetName(name + details);
         }
 
         public static IEnumerable<Entity<T>> ToEntities<T>(this IEnumerable<T> source, string type)

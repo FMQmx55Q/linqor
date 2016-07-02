@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Linqor.Tests
 {
     public class ExceptTests : BinaryOperationTests<int, int, string>
     {
-        protected override IEnumerable<BinaryTestCase<int, int, string>> GetOperateCases()
+        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateCases()
         {
             var create = BinaryTestCase.GetCreator<int, int, string>("Except");
             return new[]
@@ -27,7 +28,7 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
+        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
         {
             var create = BinaryTestCase.GetCreator<int, int, string>("Except ∞");
             return new[]
@@ -36,13 +37,20 @@ namespace Linqor.Tests
             };
         }
 
-        protected override IEnumerable<string> Operate(IEnumerable<int> left, IEnumerable<int> right)
+        protected override IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetOperations()
         {
-            return left.ToEntities("L").AsOrderedBy(l => l.Value)
-                .Except(
-                    right.ToEntities("R").AsOrderedBy(r => r.Value),
-                    (l, r) => l.CompareTo(r))
-                .Select(e => e.Key);
+            return new Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>[]
+            {
+                (left, right) => left.ToEntities("L").AsOrderedBy(l => l.Value)
+                    .Except(
+                        right.ToEntities("R").AsOrderedBy(r => r.Value),
+                        (l, r) => l.CompareTo(r))
+                    .Select(e => e.Key),
+                (left, right) => left.ToEntities("L").AsOrderedBy(l => l.Value)
+                    .Except(
+                        right.ToEntities("R").AsOrderedBy(r => r.Value))
+                    .Select(e => e.Key)
+            };
         }
     }
 }
