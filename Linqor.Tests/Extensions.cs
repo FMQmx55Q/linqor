@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Linqor.Tests
 {
-    public static class TestCases
+    public static class Extensions
     {
         public static IEnumerable<ITestCaseData> ToTestCases<TSource, TExpected>(this IEnumerable<UnaryTestCase<TSource, TExpected>> testCases)
         {
@@ -16,11 +16,11 @@ namespace Linqor.Tests
             return testCases.Select(testCase => CreateBinary(testCase.Name, testCase.Left, testCase.Right, testCase.Expected));
         }
 
-        public static IEnumerable<int> Generate(int start, int count, int step)
+        public static IEnumerable<int> Generate(int start, int repeat, int step)
         {
             while (true)
             {
-                foreach (int value in Enumerable.Repeat(start, count))
+                foreach (int value in Enumerable.Repeat(start, repeat))
                 {
                     yield return value;
                 }
@@ -40,6 +40,30 @@ namespace Linqor.Tests
             string details = string.Format(" {{ {0} }} {{ {1} }}", string.Join(", ", left.Take(10)), string.Join(", ", right.Take(10)));
 
             return new TestCaseData(left, right).Returns(expected).SetName(name + details);
+        }
+
+        public static IEnumerable<Entity<T>> ToEntities<T>(this IEnumerable<T> source, string type)
+        {
+            int id = 0;
+            return source
+                .Select(s => new Entity<T>
+                {
+                    Type = type,
+                    Id = id++,
+                    Value = s
+                });
+        }
+    }
+
+    public class Entity<T>
+    {
+        public string Type { get; set; }
+        public int Id { get; set; }
+        public T Value { get; set; }
+
+        public string Key
+        { 
+            get { return Type + "-" + Id + "-" + Value; }
         }
     }
 }

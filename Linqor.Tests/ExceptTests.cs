@@ -1,47 +1,48 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Linqor.Tests
 {
-    public class ExceptTests : BinaryOperationTests<int, int, int>
+    public class ExceptTests : BinaryOperationTests<int, int, string>
     {
-        protected override IEnumerable<BinaryTestCase<int, int, int>> GetOperateCases()
+        protected override IEnumerable<BinaryTestCase<int, int, string>> GetOperateCases()
         {
-            var create = BinaryTestCase.GetCreator<int>("Except");
+            var create = BinaryTestCase.GetCreator<int, int, string>("Except");
             return new[]
             {
-                create(new int[] { }, new int[] { }, new int[] { }),
-                create(new int[] { 0, 1, 2 }, new int[] { }, new int[] { 0, 1, 2 }),
-                create(new int[] { }, new int[] { 0, 1, 2 }, new int[] { }),
+                create(new int[] { }, new int[] { }, new string[] { }),
+                create(new int[] { 0, 1, 2 }, new int[] { }, new string[] { "L-0-0", "L-1-1", "L-2-2" }),
+                create(new int[] { }, new int[] { 0, 1, 2 }, new string[] { }),
 
-                create(new int[] { 0 }, new int[] { 0 }, new int[] { }),
-                create(new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new int[] { }),
+                create(new int[] { 0 }, new int[] { 0 }, new string[] { }),
+                create(new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new string[] { }),
 
-                create(new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new int[] { 0, 1 }),
-                create(new int[] { 2, 3, 4 }, new int[] { 0, 1, 2 }, new int[] { 3, 4 }),
+                create(new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new string[] { "L-0-0", "L-1-1" }),
+                create(new int[] { 2, 3, 4 }, new int[] { 0, 1, 2 }, new string[] { "L-1-3", "L-2-4" }),
 
-                create(new int[] { 0, 0, 1, 2, 2 }, new int[] { 0, 1, 1, 2 }, new int[] { }),
-                create(new int[] { 0, 0, 1, 3, 3 }, new int[] { 1, 1, 2, 2, 3 }, new int[] { 0 }),
+                create(new int[] { 0, 0, 1, 2, 2 }, new int[] { 0, 1, 1, 2 }, new string[] { }),
+                create(new int[] { 0, 0, 1, 3, 3 }, new int[] { 1, 1, 2, 2, 3 }, new string[] { "L-0-0" }),
 
-                create(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, new int[] { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }, new int[] { 0, 1, 2, 3, 4 }),
+                create(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, new int[] { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }, new string[] { "L-0-0", "L-1-1", "L-2-2", "L-3-3", "L-4-4" }),
             };
         }
 
-        protected override IEnumerable<BinaryTestCase<int, int, int>> GetOperateInfiniteCases()
+        protected override IEnumerable<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
         {
-            var create = BinaryTestCase.GetCreator<int>("Except ∞");
+            var create = BinaryTestCase.GetCreator<int, int, string>("Except ∞");
             return new[]
             {
-                create(TestCases.Generate(0, 1, 1), TestCases.Generate(15, 1, 1), new[] { 10, 11, 12, 13, 14 })
+                create(Extensions.Generate(0, 1, 1), Extensions.Generate(15, 1, 1), new string[] { "L-10-10", "L-11-11", "L-12-12", "L-13-13", "L-14-14" })
             };
         }
 
-        protected override IEnumerable<int> Operate(IEnumerable<int> left, IEnumerable<int> right)
+        protected override IEnumerable<string> Operate(IEnumerable<int> left, IEnumerable<int> right)
         {
-            return left
-                .AsOrderedBy(l => l)
+            return left.ToEntities("L").AsOrderedBy(l => l.Value)
                 .Except(
-                    right.AsOrderedBy(r => r),
-                    (l, r) => l.CompareTo(r));
+                    right.ToEntities("R").AsOrderedBy(r => r.Value),
+                    (l, r) => l.CompareTo(r))
+                .Select(e => e.Key);
         }
     }
 }
