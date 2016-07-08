@@ -1,5 +1,5 @@
-*.nupkg
 bin/
 obj/
 packages/*
 .vscode/*
+project.lock.json

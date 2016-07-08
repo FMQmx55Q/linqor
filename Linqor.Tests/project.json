@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0-*",
+  "dependencies": {
+    "Linqor": {
+      "version": "1.0.0",
+      "target": "project"
+    }
+  },
+  "frameworks": {
+    "net45": {
+      "dependencies": {
+        "System.Linq": "4.0.0",
+        "System.Runtime": "4.0.0",
+        "NUnit": "2.6.4"
+      }
+    }
+  }
+}
