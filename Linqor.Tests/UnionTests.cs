@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 
 namespace Linqor.Tests
 {
-    public class UnionTests : BinaryOperationTests<int, int, string>
+    public class UnionTests
     {
-        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateCases()
+        public static IReadOnlyList<TestCaseData> GetOperateCases()
         {
             var create = BinaryTestCase.GetCreator<int, int, string>("Union");
-            return new[]
+            var testCases = new[]
             {
                 create(new int[] { }, new int[] { }, new string[] { }),
                 create(new int[] { 0, 1, 2 }, new int[] { }, new string[] { "L-0-0", "L-1-1", "L-2-2" }),
@@ -26,19 +27,23 @@ namespace Linqor.Tests
             
                 create(new int[] { 2, 4, 6, 8 }, new int[] { 1, 3, 5, 7, 9 }, new string[] { "R-0-1", "L-0-2", "R-1-3", "L-1-4", "R-2-5", "L-2-6", "R-3-7", "L-3-8", "R-4-9" }),
             };
+
+            return GetOperations().SelectMany(testCases.ToTestCases).ToArray();
         }
 
-        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
+        public static IReadOnlyList<TestCaseData> GetOperateInfiniteCases()
         {
             const string name = "Union ∞";
 
-            return new[]
+            var testCases = new[]
             {
                 BinaryTestCase.Create(name, Extensions.Generate(1, 1, 2), Extensions.Generate(2, 1, 2), new[] { "L-5-11", "R-5-12", "L-6-13", "R-6-14", "L-7-15" })
             };
+
+            return GetOperations().SelectMany(testCases.ToTestCases).ToArray();
         }
 
-        protected override IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetOperations()
+        public static IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetOperations()
         {
             return new Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>[]
             {

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Linqor.Tests
 {
     [TestFixture]
-    public class JoinTests : BinaryOperationTests<int, int, string>
+    public class JoinTests
     {
-        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateCases()
+        public static IReadOnlyList<TestCaseData> GetOperateCases()
         {
             var create = BinaryTestCase.GetCreator<int, int, string>("Join");
-            return new[]
+            var testCases = new[]
             {
                 create(new int[] { }, new int[] { }, new string[] { }),
                 create(new int[] { 0, 1, 2 }, new int[] { }, new string[] { }),
@@ -27,18 +28,22 @@ namespace Linqor.Tests
             
                 create(new int[] { -1, 1, 1, 2, 3, 3, 4 }, new[] { 0, 1, 2, 2, 3, 3 }, new string[] { "L-1-1 R-1-1", "L-2-1 R-1-1", "L-3-2 R-2-2", "L-3-2 R-3-2", "L-4-3 R-4-3", "L-4-3 R-5-3", "L-5-3 R-4-3", "L-5-3 R-5-3" })
             };
+
+            return GetOperations().SelectMany(testCases.ToTestCases).ToArray();
         }
 
-        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
+        public static IReadOnlyList<TestCaseData> GetOperateInfiniteCases()
         {
             var create = BinaryTestCase.GetCreator<int, int, string>("Join ∞");
-            return new[]
+            var testCases = new[]
             {
                 create(Extensions.Generate(0, 2, 1), Extensions.Generate(1, 1, 1), new[] { "L-12-6 R-5-6", "L-13-6 R-5-6", "L-14-7 R-6-7", "L-15-7 R-6-7", "L-16-8 R-7-8" })
             };
+
+            return GetOperations().SelectMany(testCases.ToTestCases).ToArray();
         }
 
-        protected override IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetOperations()
+        public static IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetOperations()
         {
             return new Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>[]
             {

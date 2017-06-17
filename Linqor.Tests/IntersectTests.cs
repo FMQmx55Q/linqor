@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 
 namespace Linqor.Tests
 {
-    public class IntersectTests : BinaryOperationTests<int, int, string>
+    public class IntersectTests
     {
-        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateCases()
+        public static IReadOnlyList<TestCaseData> GetOperateCases()
         {
             var create = BinaryTestCase.GetCreator<int, int, string>("Intersect");
-            return new[]
+            var testCases = new[]
             {
                 create(new int[] { }, new int[] { }, new string[] { }),
                 create(new int[] { 0, 1, 2 }, new int[] { }, new string[] { }),
@@ -28,18 +29,22 @@ namespace Linqor.Tests
             
                 create(new int[] { 1, 3, 5, 7, 9 }, new int[] { 2, 4, 6, 8 }, new string[] { }),
             };
+
+            return GetOperations().SelectMany(testCases.ToTestCases).ToArray();
         }
 
-        protected override IReadOnlyList<BinaryTestCase<int, int, string>> GetOperateInfiniteCases()
+        public static IReadOnlyList<TestCaseData> GetOperateInfiniteCases()
         {
             const string name = "Intersect ∞";
-            return new[]
+            var testCases = new[]
             {
                 BinaryTestCase.Create(name, Extensions.Generate(1, 1, 2), Extensions.Generate(5, 1, 2), new string[] { "L-12-25", "L-13-27", "L-14-29", "L-15-31", "L-16-33" })
             };
+
+            return GetOperations().SelectMany(testCases.ToTestCases).ToArray();
         }
 
-        protected override IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetOperations()
+        public static IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetOperations()
         {
             return new Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>[]
             {

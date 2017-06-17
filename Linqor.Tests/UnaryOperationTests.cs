@@ -6,36 +6,21 @@ using NUnit.Framework;
 namespace Linqor.Tests
 {
     [TestFixture]
-    public abstract class UnaryOperationTests<TSource, TExpected>
+    public class UnaryOperationTests
     {
-        [TestCaseSource("GetOperateTestCases")]
-        public IEnumerable<TExpected> OperateByEqual(IEnumerable<TSource> source, Func<IEnumerable<TSource>, IEnumerable<TExpected>> operate)
+        [TestCaseSource(typeof(DistinctTests), nameof(DistinctTests.GetOperateCases))]
+        [TestCaseSource(typeof(GroupByTests), nameof(GroupByTests.GetOperateCases))]
+        public IEnumerable<T2> OperateByEqual<T1, T2>(IEnumerable<T1> source, Func<IEnumerable<T1>, IEnumerable<T2>> operate)
         {
             return operate(source);
         }
 
-        [TestCaseSource("GetOperateInfiniteTestCases")]
-        [Timeout(3000)]
-        public IEnumerable<TExpected> OperateInfiniteByEquals(IEnumerable<TSource> source, Func<IEnumerable<TSource>, IEnumerable<TExpected>> operate)
+        [TestCaseSource(typeof(DistinctTests), nameof(DistinctTests.GetOperateInfiniteCases))]
+        [TestCaseSource(typeof(GroupByTests), nameof(GroupByTests.GetOperateInfiniteCases))]
+        [MaxTime(3000)]
+        public IEnumerable<T2> OperateInfiniteByEquals<T1, T2>(IEnumerable<T1> source, Func<IEnumerable<T1>, IEnumerable<T2>> operate)
         {
             return operate(source).Skip(10).Take(5);
         }
-
-        protected IEnumerable<ITestCaseData> GetOperateTestCases()
-        {
-            return GetOperations()
-                .SelectMany(GetOperateCases().ToTestCases);
-        }
-
-        protected IEnumerable<ITestCaseData> GetOperateInfiniteTestCases()
-        {
-            return GetOperations()
-                .SelectMany(GetOperateInfiniteCases().ToTestCases);
-        }
-
-        protected abstract IReadOnlyList<UnaryTestCase<TSource, TExpected>> GetOperateCases();
-        protected abstract IReadOnlyList<UnaryTestCase<TSource, TExpected>> GetOperateInfiniteCases();
-
-        protected abstract IReadOnlyList<Func<IEnumerable<TSource>, IEnumerable<TExpected>>> GetOperations();
     }
 }

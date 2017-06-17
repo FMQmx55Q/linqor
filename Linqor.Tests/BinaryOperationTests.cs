@@ -6,36 +6,28 @@ using NUnit.Framework;
 namespace Linqor.Tests
 {
     [TestFixture]
-    public abstract class BinaryOperationTests<TLeft, TRight, TExpected>
+    public class BinaryOperationTests
     {
-        [TestCaseSource("GetOperateTestCases")]
-        public IEnumerable<TExpected> OperateByCompare(IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<IEnumerable<TLeft>, IEnumerable<TRight>, IEnumerable<TExpected>> operate)
+        [TestCaseSource(typeof(ConcatTests), nameof(ConcatTests.GetOperateCases))]
+        [TestCaseSource(typeof(ExceptTests), nameof(ExceptTests.GetOperateCases))]
+        [TestCaseSource(typeof(GroupJoinTests), nameof(GroupJoinTests.GetOperateCases))]
+        [TestCaseSource(typeof(IntersectTests), nameof(IntersectTests.GetOperateCases))]
+        [TestCaseSource(typeof(JoinTests), nameof(JoinTests.GetOperateCases))]
+        [TestCaseSource(typeof(UnionTests), nameof(UnionTests.GetOperateCases))]
+        public IEnumerable<T3> OperateByCompare<T1, T2, T3>(IEnumerable<T1> left, IEnumerable<T2> right, Func<IEnumerable<T1>, IEnumerable<T2>, IEnumerable<T3>> operate)
         {
             return operate(left, right).ToArray();
         }
 
-        [TestCaseSource("GetOperateInfiniteTestCases")]
-        [Timeout(3000)]
-        public IEnumerable<TExpected> OperateInfiniteByCompare(IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<IEnumerable<TLeft>, IEnumerable<TRight>, IEnumerable<TExpected>> operate)
+        [TestCaseSource(typeof(ConcatTests), nameof(ConcatTests.GetOperateInfiniteCases))]
+        [TestCaseSource(typeof(ExceptTests), nameof(ExceptTests.GetOperateInfiniteCases))]
+        [TestCaseSource(typeof(GroupJoinTests), nameof(GroupJoinTests.GetOperateInfiniteCases))]
+        [TestCaseSource(typeof(IntersectTests), nameof(IntersectTests.GetOperateInfiniteCases))]
+        [TestCaseSource(typeof(UnionTests), nameof(UnionTests.GetOperateInfiniteCases))]
+        [MaxTime(3000)]
+        public IEnumerable<T3> OperateInfiniteByCompare<T1, T2, T3>(IEnumerable<T1> left, IEnumerable<T2> right, Func<IEnumerable<T1>, IEnumerable<T2>, IEnumerable<T3>> operate)
         {
             return operate(left, right).Skip(10).Take(5).ToArray();
         }
-
-        protected IEnumerable<ITestCaseData> GetOperateTestCases()
-        {
-            return GetOperations()
-                .SelectMany(GetOperateCases().ToTestCases);
-        }
-
-        protected IEnumerable<ITestCaseData> GetOperateInfiniteTestCases()
-        {
-            return GetOperations()
-                .SelectMany(GetOperateInfiniteCases().ToTestCases);
-        }
-
-        protected abstract IReadOnlyList<BinaryTestCase<TLeft, TRight, TExpected>> GetOperateCases();
-        protected abstract IReadOnlyList<BinaryTestCase<TLeft, TRight, TExpected>> GetOperateInfiniteCases();
-
-        protected abstract IReadOnlyList<Func<IEnumerable<TLeft>, IEnumerable<TRight>, IEnumerable<TExpected>>> GetOperations();
     }
 }
