@@ -3,9 +3,10 @@ mono: none
 dotnet: 1.0.3
 dist: trusty
 install:
-- dotnet restore
-- nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+- dotnet restore Linqor
+- dotnet restore Linqor.Tests
 
 script:
-- dotnet build
-- mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Linqor.Tests/bin/Release/Linqor.Tests.dll
+- dotnet build Linqor
+- dotnet build Linqor.Tests
+- dotnet test
