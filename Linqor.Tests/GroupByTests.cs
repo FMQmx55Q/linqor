@@ -8,30 +8,32 @@ namespace Linqor.Tests
     [TestFixture]
     public static class GroupByTests
     {
-        public static IReadOnlyList<TestCaseData> GetOperateCases()
+        public static IEnumerable<TestCaseData> GetOperateCases()
         {
-            var create = UnaryTestCase.GetCreator<int, string>("GroupBy");
             var testCases = new[]
             {
-                create(new int[] { }, new string[] { }),
-                create(new int[] { 1, 2, 2, 3, 3, 3 }, new[] { "1: { S-0-1 }", "2: { S-1-2, S-2-2 }", "3: { S-3-3, S-4-3, S-5-3 }" })
+                (new int[] { }, new string[] { }),
+                (new int[] { 1, 2, 2, 3, 3, 3 }, new[] { "1: { S-0-1 }", "2: { S-1-2, S-2-2 }", "3: { S-3-3, S-4-3, S-5-3 }" })
             };
 
-            return GetOperations().SelectMany(testCases.ToTestCases).ToArray();
+            return from func in GetFuncs()
+                from testCase in testCases
+                select TestCase.Unary("GroupBy", testCase, func);
         }
 
-        public static IReadOnlyList<TestCaseData> GetOperateInfiniteCases()
+        public static IEnumerable<TestCaseData> GetOperateInfiniteCases()
         {
-            var create = UnaryTestCase.GetCreator<int, string>("GroupBy ∞");
             var testCases = new[] 
             {
-                create(Extensions.Generate(1, 2, 1), new[] { "11: { S-20-11, S-21-11 }", "12: { S-22-12, S-23-12 }", "13: { S-24-13, S-25-13 }", "14: { S-26-14, S-27-14 }", "15: { S-28-15, S-29-15 }" })
+                (TestCase.Generate(1, 2, 1), new[] { "11: { S-20-11, S-21-11 }", "12: { S-22-12, S-23-12 }", "13: { S-24-13, S-25-13 }", "14: { S-26-14, S-27-14 }", "15: { S-28-15, S-29-15 }" })
             };
 
-            return GetOperations().SelectMany(testCases.ToTestCases).ToArray();
+            return from func in GetFuncs()
+                from testCase in testCases
+                select TestCase.Unary("GroupBy ∞", testCase, func);
         }
 
-        public static IReadOnlyList<Func<IEnumerable<int>, IEnumerable<string>>> GetOperations()
+        public static IReadOnlyList<Func<IEnumerable<int>, IEnumerable<string>>> GetFuncs()
         {
             return new Func<IEnumerable<int>, IEnumerable<string>>[]
             {
