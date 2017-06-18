@@ -15,16 +15,18 @@ namespace Linqor.Tests
                 (new int[] { 0, 1, 2 }, new int[] { }, new string[] { }),
                 (new int[] { }, new int[] { 0, 1, 2 }, new string[] { }),
                 
-                (new int[] { 0 }, new int[] { 0 }, new string[] { "L-0-0" }),
-                (new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new string[] { "L-0-0", "L-1-1", "L-2-2" }),
+                (new int[] { 0 }, new int[] { 0 }, new string[] { "L-0-0", "R-0-0" }),
+                (new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new string[] { "L-0-0", "R-0-0", "L-1-1", "R-1-1", "L-2-2", "R-2-2" }),
 
-                (new int[] { 0, 1, 2, 2, 3, 3, 3, 4 }, new int[] { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 }, new string[] { "L-0-0", "L-1-1", "L-2-2", "L-4-3", "L-7-4" }),
+                (new int[] { 0, 1, 2, 2, 3, 3, 3, 4 },
+                 new int[] { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 },
+                 new string[] { "L-0-0", "R-0-0", "R-1-0", "L-1-1", "R-2-1", "R-3-1", "L-2-2", "L-3-2", "R-4-2", "R-5-2", "L-4-3", "L-5-3", "L-6-3", "R-6-3", "R-7-3", "L-7-4", "R-8-4", "R-9-4" }),
                 
-                (new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new string[] { "L-2-2" }),
-                (new int[] { 2, 3, 4 }, new int[] { 0, 1, 2 }, new string[] { "L-0-2" }),
+                (new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new string[] { "L-2-2", "R-0-2" }),
+                (new int[] { 2, 3, 4 }, new int[] { 0, 1, 2 }, new string[] { "L-0-2", "R-2-2" }),
 
-                (new int[] { 0, 0, 1, 2, 2 }, new int[] { 0, 1, 1, 2 }, new string[] { "L-0-0", "L-2-1", "L-3-2" }),
-                (new int[] { 0, 0, 1, 3, 3 }, new int[] { 1, 1, 2, 2, 3 }, new string[] { "L-2-1", "L-3-3" }),
+                (new int[] { 0, 0, 1, 2, 2 }, new int[] { 0, 1, 1, 2 }, new string[] { "L-0-0", "L-1-0", "R-0-0", "L-2-1", "R-1-1", "R-2-1", "L-3-2", "L-4-2", "R-3-2" }),
+                (new int[] { 0, 0, 1, 3, 3 }, new int[] { 1, 1, 2, 2, 3 }, new string[] { "L-2-1", "R-0-1", "R-1-1", "L-3-3", "L-4-3", "R-4-3" }),
             
                 (new int[] { 1, 3, 5, 7, 9 }, new int[] { 2, 4, 6, 8 }, new string[] { }),
             };
@@ -38,7 +40,7 @@ namespace Linqor.Tests
         {
             var testCases = new[]
             {
-                (TestCase.Generate(1, 1, 2), TestCase.Generate(5, 1, 2), new string[] { "L-12-25", "L-13-27", "L-14-29", "L-15-31", "L-16-33" })
+                (TestCase.Generate(1, 1, 2), TestCase.Generate(5, 1, 2), new string[] { "L-7-15", "R-5-15", "L-8-17", "R-6-17", "L-9-19" })
             };
 
             return from func in GetFuncs()

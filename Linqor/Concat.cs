@@ -27,7 +27,9 @@ namespace Linqor
 
                 while (leftState.HasCurrent && rightState.HasCurrent)
                 {
-                    switch(compare(left.KeySelector(leftState.Current), right.KeySelector(rightState.Current)))
+                    var leftKey = left.KeySelector(leftState.Current);
+                    var rightKey = right.KeySelector(rightState.Current);
+                    switch(compare(leftKey, rightKey))
                     {
                         case -1:
                             yield return leftState.Current;
@@ -35,19 +37,23 @@ namespace Linqor
                             break;
                         case 0:
                             yield return leftState.Current;
-                            foreach(T item in leftEnumerator.TakeWhile(current => compare(left.KeySelector(leftState.Current), left.KeySelector(current)) == 0, last => leftState = last))
-                            {
-                                yield return item;
-                            }
+                            foreach(T item in leftEnumerator.TakeWhile(
+                                current => compare(left.KeySelector(current), rightKey) == 0,
+                                last => leftState = last))
+                                {
+                                    yield return item;
+                                }
 
                             yield return rightEnumerator.Current;
-                            foreach(T item in rightEnumerator.TakeWhile(current => compare(right.KeySelector(rightState.Current), right.KeySelector(current)) == 0, last => rightState = last))
-                            {
-                                yield return item;
-                            }
+                            foreach(T item in rightEnumerator.TakeWhile(
+                                current => compare(right.KeySelector(current), rightKey) == 0,
+                                last => rightState = last))
+                                {
+                                    yield return item;
+                                }
                             break;
                         case 1:
-                            yield return rightEnumerator.Current;
+                            yield return rightState.Current;
                             rightState = rightEnumerator.Next();
                             break;
                     }

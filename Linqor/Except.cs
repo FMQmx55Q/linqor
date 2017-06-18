@@ -6,7 +6,7 @@ namespace Linqor
     public static partial class Extensions
     {
         /// <summary>
-        /// Produces the set difference of two ordered sequences.
+        /// Produces the difference of two ordered sequences.
         /// </summary>
         public static IEnumerable<T> Except<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right)
             where TKey : IComparable<TKey>
@@ -15,13 +15,12 @@ namespace Linqor
         }
         
         /// <summary>
-        /// Produces the set difference of two ordered sequences.
+        /// Produces the difference of two ordered sequences.
         /// </summary>
         public static IEnumerable<T> Except<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right, Func<TKey, TKey, int> compare)
         {
-            Func<TKey, TKey, bool> equals = (l, r) => compare(l, r) == 0; 
-            using (var leftEnumerator = left.Distinct(equals).GetEnumerator())
-            using (var rightEnumerator = right.Distinct(equals).GetEnumerator())
+            using (var leftEnumerator = left.Source.GetEnumerator())
+            using (var rightEnumerator = right.Source.GetEnumerator())
             {
                 EnumeratorState<T> leftState = leftEnumerator.Next();
                 EnumeratorState<T> rightState = rightEnumerator.Next();
@@ -35,8 +34,11 @@ namespace Linqor
                             leftState = leftEnumerator.Next();
                             break;
                         case 0:
-                            leftState = leftEnumerator.Next();
-                            rightState = rightEnumerator.Next();
+                            var leftKey = left.KeySelector(leftState.Current);
+                            leftState = leftEnumerator.SkipWhile(current => compare(leftKey, left.KeySelector(current)) == 0);
+                            
+                            var rightKey = right.KeySelector(rightState.Current);
+                            rightState = rightEnumerator.SkipWhile(current => compare(rightKey, right.KeySelector(current)) == 0);
                             break;
                         case 1:
                             rightState = rightEnumerator.Next();
