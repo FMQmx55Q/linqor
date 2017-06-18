@@ -3,15 +3,21 @@
 
 Linq extensions for ordered sequences. Provides better perfomance in comparison to standard extensions. Lazily handles large or even infinite sequences.
 
-## Functions
-- Concat
-- Distinct
-- Except
-- GroupBy
-- GroupJoin
-- Intersect
-- Join
-- Union
+Provides **Concat**, **Distinct**, **Except**, **GroupBy**, **GroupJoin**, **Intersect**, **Join** and **Union**.
+
+## Comparing to System.Linq
+**Except**, **Intersect** and **Union** is not Set operations in Linqor. In order to make them behave this way use **Distinct** before or after operation.
+
+| System.Linq |        Linqor        |
+|-------------|----------------------|
+| Concat      | Concat               |
+| Distinct    | Distinct             |
+| Except      | Except + Distinct    |
+| GroupBy     | GroupBy              |
+| GroupJoin   | GroupJoin            |
+| Intersect   | Intersect + Distinct |
+| Join        | Join                 |
+| Union       | Union + Distinct     |
 
 ## Usage
 With IEquatable or IComparable types
