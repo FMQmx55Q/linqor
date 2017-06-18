@@ -9,4 +9,4 @@ install:
 script:
 - dotnet build Linqor
 - dotnet build Linqor.Tests
-- dotnet test
+- dotnet test Linqor.Tests\Linqor.Tests.csproj
