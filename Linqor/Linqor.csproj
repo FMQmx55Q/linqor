@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Version>2.0.1</Version>
+        <Version>2.0.2</Version>
         <Title>Linqor</Title>
         <Authors>Andrew Morozov</Authors>
         <Copyright>Andrew Morozov</Copyright>
@@ -16,7 +16,7 @@
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/dangerozov/linqor</RepositoryUrl>
 
-        <TargetFramework>netstandard1.0</TargetFramework>
+        <TargetFrameworks>netstandard1.0;net45</TargetFrameworks>
         <NetStandardImplicitPackageVersion>1.0</NetStandardImplicitPackageVersion>
     </PropertyGroup>
 </Project>
