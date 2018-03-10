@@ -8,5 +8,5 @@ install:
 
 script:
 - dotnet build Linqor -f netstandard1.0
-- dotnet build Linqor.Tests -f netstandard1.0
+- dotnet build Linqor.Tests
 - cd Linqor.Tests && dotnet test
