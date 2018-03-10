@@ -3,10 +3,10 @@ mono: none
 dotnet: 1.0.4
 dist: trusty
 install:
-- dotnet restore Linqor -r netstandard1.0
-- dotnet restore Linqor.Tests -r netstandard1.0
+- dotnet restore Linqor
+- dotnet restore Linqor.Tests
 
 script:
-- dotnet build Linqor -r netstandard1.0
-- dotnet build Linqor.Tests -r netstandard1.0
+- dotnet build Linqor -f netstandard1.0
+- dotnet build Linqor.Tests -f netstandard1.0
 - cd Linqor.Tests && dotnet test
