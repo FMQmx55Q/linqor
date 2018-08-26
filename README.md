@@ -6,7 +6,7 @@ Linq extensions for ordered sequences. Provides better perfomance in comparison 
 Provides **Concat**, **Distinct**, **Except**, **GroupBy**, **GroupJoin**, **Intersect**, **Join** and **Union**.
 
 ## Comparing to System.Linq
-**Except**, **Intersect** and **Union** is not Set operations in Linqor. In order to make them behave this way use **Distinct** before or after operation.
+**Except**, **Intersect** and **Union** are not Set operations in Linqor. In order to make them behave this way use **Distinct** before or after operation.
 
 | System.Linq |        Linqor        |
 |-------------|----------------------|
