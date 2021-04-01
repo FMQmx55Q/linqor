@@ -16,7 +16,7 @@
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/dangerozov/linqor</RepositoryUrl>
 
-        <TargetFrameworks>netstandard1.0;net45</TargetFrameworks>
-        <NetStandardImplicitPackageVersion>1.0</NetStandardImplicitPackageVersion>
+        <TargetFrameworks>netstandard1.6;net45</TargetFrameworks>
+        <NetStandardImplicitPackageVersion>1.6</NetStandardImplicitPackageVersion>
     </PropertyGroup>
 </Project>

@@ -2,9 +2,7 @@
     <PropertyGroup>
         <Version>1.1.0</Version>
         
-        <TargetFramework>netcoreapp1.0</TargetFramework>
-
-        <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
 
     </PropertyGroup>
     <ItemGroup>
