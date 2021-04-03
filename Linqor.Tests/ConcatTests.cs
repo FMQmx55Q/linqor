@@ -1,63 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
 namespace Linqor.Tests
 {
+    [TestFixture]
     public class ConcatTests
     {
-        public static IEnumerable<TestCaseData> GetTestCases()
+        [TestCaseSource(nameof(GetTestCases))]
+        public IEnumerable<string> Concat(IEnumerable<string> left, IEnumerable<string> right)
+        {
+            return Extensions.Concat(
+                left.AsOrderedBy(),
+                right.AsOrderedBy(),
+                (l, r) => l.ID().CompareTo(r.ID()));
+        }
+
+        private static IEnumerable<TestCaseData> GetTestCases()
         {
             var testCases = new[]
             {
-                (new int[] { }, new int[] { }, new string[] { }),
-                (new int[] { 0, 1, 2 }, new int[] { }, new string[] { "L-0-0", "L-1-1", "L-2-2" }),
-                (new int[] { }, new int[] { 0, 1, 2 }, new string[] { "R-0-0", "R-1-1", "R-2-2" }),
+                (new string[] { }, new string[] { }, new string[] { }),
+                (new[] { "L0", "L1", "L2" }, new string[] { }, new[] { "L0", "L1", "L2" }),
+                (new string[] { }, new[] { "R0", "R1", "R2" }, new[] { "R0", "R1", "R2" }),
 
-                (new int[] { 0 }, new int[] { 0 }, new string[] { "L-0-0", "R-0-0" }),
-                (new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new string[] { "L-0-0", "R-0-0", "L-1-1", "R-1-1", "L-2-2", "R-2-2" }),
+                (new[] { "L0" }, new[] { "R0" }, new[] { "L0", "R0" }),
+                (new[] { "L0", "L1", "L2" }, new[] { "R0", "R1", "R2" }, new[] { "L0", "R0", "L1", "R1", "L2", "R2" }),
 
-                (new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new string[] { "L-0-0", "L-1-1", "L-2-2", "R-0-2", "R-1-3", "R-2-4" }),
-                (new int[] { 2, 3, 4 }, new int[] { 0, 1, 2 }, new string[] { "R-0-0", "R-1-1", "L-0-2", "R-2-2", "L-1-3", "L-2-4" }),
+                (new[] { "L0", "L1", "L2" }, new[] { "R2", "R3", "R4" }, new[] { "L0", "L1", "L2", "R2", "R3", "R4" }),
+                (new[] { "L2", "L3", "L4" }, new[] { "R0", "R1", "R2" }, new[] { "R0", "R1", "L2", "R2", "L3", "L4" }),
 
-                (new int[] { 0, 0, 1, 2, 2 }, new int[] { 0, 1, 1, 2 }, new string[] { "L-0-0", "L-1-0", "R-0-0", "L-2-1", "R-1-1", "R-2-1", "L-3-2", "L-4-2", "R-3-2" }),
-                (new int[] { 0, 0, 1, 3, 3 }, new int[] { 1, 1, 2, 2, 3 }, new string[] { "L-0-0", "L-1-0", "L-2-1", "R-0-1", "R-1-1", "R-2-2", "R-3-2", "L-3-3", "L-4-3", "R-4-3" }),
+                (new[] { "L0", "L0", "L1", "L2", "L2" }, new[] { "R0", "R1", "R1", "R2" }, new[] { "L0", "L0", "R0", "L1", "R1", "R1", "L2", "L2", "R2" }),
+                (new[] { "L0", "L0", "L1", "L3", "L3" }, new[] { "R1", "R1", "R2", "R2", "R3" }, new[] { "L0", "L0", "L1", "R1", "R1", "R2", "R2", "L3", "L3", "R3" }),
 
-                (new int[] { 2, 4, 6, 8 }, new int[] { 1, 3, 5, 7, 9 }, new string[] { "R-0-1", "L-0-2", "R-1-3", "L-1-4", "R-2-5", "L-2-6", "R-3-7", "L-3-8", "R-4-9" }),
+                (new[] { "L2", "L4", "L6", "L8" }, new[] { "R1", "R3", "R5", "R7", "R9" }, new[] { "R1", "L2", "R3", "L4", "R5", "L6", "R7", "L8", "R9" }),
             };
 
-            return from func in GetFuncs()
-                from testCase in testCases
-                select TestCase.Binary("Concat", testCase, func);
-        }
+            var linqTestCases = testCases
+                .Select(c => (c.Item1, c.Item2, c.Item1.Concat(c.Item2).OrderBy(Helpers.ID).ToArray()));
 
-        public static IEnumerable<TestCaseData> GetInfiniteTestCases()
-        {
-            var testCases = new[]
-            {
-                (TestCase.Generate(0, 1, 1), TestCase.Generate(1, 1, 1), (IEnumerable<string>)new string[] { "R-4-5", "L-6-6", "R-5-6", "L-7-7", "R-6-7" })
-            };
-
-            return from operation in GetFuncs()
-                from testCase in testCases
-                select TestCase.Binary("Concat ∞", testCase, operation);
-        }
-
-        public static IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetFuncs()
-        {
-            return new Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>[]
-            {
-                (left, right) => left.ToEntities("L").AsOrderedBy(l => l.Value)
-                    .Concat(
-                        right.ToEntities("R").AsOrderedBy(r => r.Value),
-                        (l, r) => l.CompareTo(r))
-                    .Select(e => e.Key),
-                (left, right) => left.ToEntities("L").AsOrderedBy(l => l.Value)
-                    .Concat(
-                        right.ToEntities("R").AsOrderedBy(r => r.Value))
-                    .Select(e => e.Key)
-            };
+            return testCases.Concat(linqTestCases)
+                .Select((c, index) => new TestCaseData(c.Item1, c.Item2).Returns(c.Item3).SetName($"Concat {Helpers.Get2DID(index, testCases.Length)}"));
         }
     }
 }

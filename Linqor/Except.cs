@@ -19,6 +19,9 @@ namespace Linqor
         /// </summary>
         public static IEnumerable<T> Except<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right, Func<TKey, TKey, int> compare)
         {
+            left = left.Distinct((l, r) => compare(l, r) == 0).AsOrderedBy(left.KeySelector);
+            right = right.Distinct((l, r) => compare(l, r) == 0).AsOrderedBy(right.KeySelector);
+
             using (var leftEnumerator = left.Source.GetEnumerator())
             using (var rightEnumerator = right.Source.GetEnumerator())
             {

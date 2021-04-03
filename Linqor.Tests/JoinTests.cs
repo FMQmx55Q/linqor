@@ -8,57 +8,38 @@ namespace Linqor.Tests
     [TestFixture]
     public class JoinTests
     {
-        public static IEnumerable<TestCaseData> GetOperateCases()
+        [TestCaseSource(nameof(GetTestCases))]
+        public string[] Join(string[] left, string[] right)
+        {
+            return Extensions.Join(
+                left.AsOrderedBy(),
+                right.AsOrderedBy(),
+                (l, r) => $"{l} {r}",
+                (l, r) => l.ID().CompareTo(r.ID())).ToArray();
+        }
+
+        public static IEnumerable<TestCaseData> GetTestCases()
         {
             var testCases = new[]
             {
-                (new int[] { }, new int[] { }, new string[] { }),
-                (new int[] { 0, 1, 2 }, new int[] { }, new string[] { }),
-                (new int[] { }, new int[] { 0, 1, 2 }, new string[] { }),
+                (new string[] { }, new string[] { }, new string[] { }),
+                (new[] { "L0", "L1", "L2" }, new string[] { }, new string[] { }),
+                (new string[] { }, new[] { "R0", "R1", "R2" }, new string[] { }),
 
-                (new int[] { 0 }, new int[] { 0 }, new string[] { "L-0-0 R-0-0" }),
-                (new int[] { 0, 1, 2 }, new int[] { 0, 1, 2 }, new string[] { "L-0-0 R-0-0", "L-1-1 R-1-1", "L-2-2 R-2-2" }),
+                (new[] { "L0" }, new[] { "R0" }, new string[] { "L0 R0" }),
+                (new[] { "L0", "L1", "L2" }, new[] { "R0", "R1", "R2" }, new string[] { "L0 R0", "L1 R1", "L2 R2" }),
 
-                (new int[] { 0, 1, 2 }, new int[] { 2, 3, 4 }, new string[] { "L-2-2 R-0-2" }),
-                (new int[] { 2, 3, 4 }, new int[] { 0, 1, 2 }, new string[] { "L-0-2 R-2-2" }),
+                (new[] { "L0", "L1", "L2" }, new[] { "R2", "R3", "R4" }, new string[] { "L2 R2" }),
+                (new[] { "L2", "L3", "L4" }, new[] { "R0", "R1", "R2" }, new string[] { "L2 R2" }),
 
-                (new int[] { 0, 0, 1, 2, 2 }, new int[] { 0, 1, 1, 2 }, new string[] { "L-0-0 R-0-0", "L-1-0 R-0-0", "L-2-1 R-1-1", "L-2-1 R-2-1", "L-3-2 R-3-2", "L-4-2 R-3-2" }),
-                (new int[] { 0, 0, 1, 3, 3 }, new int[] { 1, 1, 2, 2, 3 }, new string[] { "L-2-1 R-0-1", "L-2-1 R-1-1", "L-3-3 R-4-3", "L-4-3 R-4-3" }),
+                (new[] { "L0", "L0", "L1", "L2", "L2" }, new[] { "R0", "R1", "R1", "R2" }, new string[] { "L0 R0", "L0 R0", "L1 R1", "L1 R1", "L2 R2", "L2 R2" }),
+                (new[] { "L0", "L0", "L1", "L3", "L3" }, new[] { "R1", "R1", "R2", "R2", "R3" }, new string[] { "L1 R1", "L1 R1", "L3 R3", "L3 R3" }),
             
-                (new int[] { -1, 1, 1, 2, 3, 3, 4 }, new[] { 0, 1, 2, 2, 3, 3 }, new string[] { "L-1-1 R-1-1", "L-2-1 R-1-1", "L-3-2 R-2-2", "L-3-2 R-3-2", "L-4-3 R-4-3", "L-4-3 R-5-3", "L-5-3 R-4-3", "L-5-3 R-5-3" })
+                (new[] { "L-1", "L1", "L1", "L2", "L3", "L3", "L4" }, new[] { "R0", "R1", "R2", "R2", "R3", "R3" }, new string[] { "L1 R1", "L1 R1", "L2 R2", "L2 R2", "L3 R3", "L3 R3", "L3 R3", "L3 R3" })
             };
 
-            return from func in GetFuncs()
-                from testCase in testCases
-                select TestCase.Binary("Join", testCase, func);
-        }
-
-        public static IEnumerable<TestCaseData> GetOperateInfiniteCases()
-        {
-            var testCases = new[]
-            {
-                (TestCase.Generate(0, 2, 1), TestCase.Generate(1, 1, 1), new[] { "L-12-6 R-5-6", "L-13-6 R-5-6", "L-14-7 R-6-7", "L-15-7 R-6-7", "L-16-8 R-7-8" })
-            };
-
-            return from func in GetFuncs()
-                from testCase in testCases
-                select TestCase.Binary("Join ∞", testCase, func);
-        }
-
-        public static IReadOnlyList<Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>> GetFuncs()
-        {
-            return new Func<IEnumerable<int>, IEnumerable<int>, IEnumerable<string>>[]
-            {
-                (left, right) =>  left.ToEntities("L").AsOrderedBy(l => l.Value)
-                    .Join(
-                        right.ToEntities("R").AsOrderedBy(r => r.Value),
-                        (l, r) => l.Key + " " + r.Key,
-                        (l, r) => l.CompareTo(r)),
-                (left, right) => left.ToEntities("L").AsOrderedBy(l => l.Value)
-                    .Join(
-                        right.ToEntities("R").AsOrderedBy(r => r.Value),
-                        (l, r) => l.Key + " " + r.Key)
-            };
+            return testCases
+                .Select((c, index) => new TestCaseData(c.Item1, c.Item2).Returns(c.Item3).SetName($"Join {Helpers.Get2DID(index, testCases.Length)}"));
         }
     }
 }

@@ -19,6 +19,13 @@ namespace Linqor
         /// </summary>
         public static IEnumerable<T> Intersect<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right, Func<TKey, TKey, int> compare)
         {
+            return IntersectInternal(left, right, compare)
+                .AsOrderedBy(left.KeySelector)
+                .Distinct((l, r) => compare(l, r) == 0);
+        }
+
+        private static IEnumerable<T> IntersectInternal<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right, Func<TKey, TKey, int> compare)
+        {
             using (var leftEnumerator = left.Source.GetEnumerator())
             using (var rightEnumerator = right.Source.GetEnumerator())
             {

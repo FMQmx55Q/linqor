@@ -19,7 +19,10 @@ namespace Linqor
         /// </summary>
         public static IEnumerable<T> Union<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right, Func<TKey, TKey, int> compare)
         {
-            foreach(var item in left.Concat(right, compare)) yield return item;
+            foreach(var item in left
+                .Concat(right, compare)
+                .AsOrderedBy(left.KeySelector)
+                .Distinct((l, r) => compare(l, r) == 0)) yield return item;
         }
     }
 }
