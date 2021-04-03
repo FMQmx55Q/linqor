@@ -1,12 +1,11 @@
 language: csharp
 mono: none
-dotnet: 3.1.13
-dist: trusty
+dotnet: 3.1.407
 install:
 - dotnet restore Linqor
 - dotnet restore Linqor.Tests
 
 script:
-- dotnet build Linqor -f netstandard1.0
+- dotnet build Linqor -f netstandard1.6
 - dotnet build Linqor.Tests
 - cd Linqor.Tests && dotnet test
