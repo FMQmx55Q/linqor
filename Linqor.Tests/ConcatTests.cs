@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using static Linqor.Tests.Helpers;
 
 namespace Linqor.Tests
 {
@@ -8,12 +9,13 @@ namespace Linqor.Tests
     public class ConcatTests
     {
         [TestCaseSource(nameof(GetTestCases))]
-        public IEnumerable<string> Concat(IEnumerable<string> left, IEnumerable<string> right)
+        public string[] Concat(string[] left, string[] right)
         {
-            return Extensions.Concat(
-                left.AsOrderedBy(),
-                right.AsOrderedBy(),
-                (l, r) => l.ID().CompareTo(r.ID()));
+            return Extensions
+                .Concat(
+                    left.AsOrderedBy(NumberInString),
+                    right.AsOrderedBy(NumberInString))
+                .ToArray();
         }
 
         private static IEnumerable<TestCaseData> GetTestCases()
@@ -37,7 +39,10 @@ namespace Linqor.Tests
             };
 
             var linqTestCases = testCases
-                .Select(c => (c.Item1, c.Item2, c.Item1.Concat(c.Item2).OrderBy(Helpers.ID).ToArray()));
+                .Select(c => (c.Item1, c.Item2, Enumerable
+                    .Concat(c.Item1, c.Item2)
+                    .OrderBy(NumberInString)
+                    .ToArray()));
 
             return testCases.Concat(linqTestCases)
                 .Select((c, index) => new TestCaseData(c.Item1, c.Item2).Returns(c.Item3).SetName($"Concat {Helpers.Get2DID(index, testCases.Length)}"));

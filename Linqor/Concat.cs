@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Linqor
 {
@@ -8,28 +7,28 @@ namespace Linqor
         /// <summary>
         /// Concatenates two ordered sequences.
         /// </summary>
-        public static IEnumerable<T> Concat<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right)
-            where TKey : IComparable<TKey>
+        public static OrderedEnumerable<T, TKey> Concat<T, TKey>(
+            this OrderedEnumerable<T, TKey> left,
+            OrderedEnumerable<T, TKey> right)
         {
-            return left.Concat(right, (l, r) => l.CompareTo(r));
+            return Concat(left, right, left.Comparer)
+                .AsOrderedLike(left);
         }
-        
-        /// <summary>
-        /// Concatenates two ordered sequences.
-        /// </summary>
-        public static IEnumerable<T> Concat<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right, Func<TKey, TKey, int> compare)
+
+        private static IEnumerable<T> Concat<T>(
+            IEnumerable<T> left,
+            IEnumerable<T> right,
+            IComparer<T> comparer)
         {
-            using (var leftEnumerator = left.Source.GetEnumerator())
-            using (var rightEnumerator = right.Source.GetEnumerator())
+            using (var leftEnumerator = left.GetEnumerator())
+            using (var rightEnumerator = right.GetEnumerator())
             {
                 EnumeratorState<T> leftState = leftEnumerator.Next();
                 EnumeratorState<T> rightState = rightEnumerator.Next();
 
                 while (leftState.HasCurrent && rightState.HasCurrent)
                 {
-                    var leftKey = left.KeySelector(leftState.Current);
-                    var rightKey = right.KeySelector(rightState.Current);
-                    switch(compare(leftKey, rightKey))
+                    switch(comparer.Compare(leftState.Current, rightState.Current))
                     {
                         case -1:
                             yield return leftState.Current;
@@ -38,7 +37,7 @@ namespace Linqor
                         case 0:
                             yield return leftState.Current;
                             foreach(T item in leftEnumerator.TakeWhile(
-                                current => compare(left.KeySelector(current), rightKey) == 0,
+                                current => comparer.Compare(current, rightState.Current) == 0,
                                 last => leftState = last))
                                 {
                                     yield return item;
@@ -46,7 +45,7 @@ namespace Linqor
 
                             yield return rightEnumerator.Current;
                             foreach(T item in rightEnumerator.TakeWhile(
-                                current => compare(right.KeySelector(current), rightKey) == 0,
+                                current => comparer.Compare(current, rightState.Current) == 0,
                                 last => rightState = last))
                                 {
                                     yield return item;

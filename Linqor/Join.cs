@@ -8,33 +8,42 @@ namespace Linqor
         /// <summary>
         /// Correlates the elements of two ordered sequences based on matching keys.
         /// </summary>
-        public static IEnumerable<TResult> Join<TLeft, TRight, TKey, TResult>(
-            this OrderedEnumerable<TLeft, TKey> left,
-            OrderedEnumerable<TRight, TKey> right,
-            Func<TLeft, TRight, TResult> resultSelector)
-            where TKey : IComparable<TKey>
+        public static OrderedEnumerable<TResult, TKey> Join<TOuter, TInner, TKey, TResult>(
+            this OrderedEnumerable<TOuter, TKey> outer,
+            OrderedEnumerable<TInner, TKey> inner,
+            Func<TOuter, TInner, TResult> resultSelector,
+            Func<TResult, TKey> resultKeySelector)
         {
-            return left.Join(right, resultSelector, (l, r) => l.CompareTo(r));
+            return Join(
+                    outer,
+                    inner,
+                    outer.KeySelector,
+                    inner.KeySelector,
+                    resultSelector,
+                    outer.KeyComparer)
+                .AsOrderedLike(outer, resultKeySelector);
         }
         
         /// <summary>
         /// Correlates the elements of two ordered sequences based on matching keys.
         /// </summary>
-        public static IEnumerable<TResult> Join<TLeft, TRight, TKey, TResult>(
-            this OrderedEnumerable<TLeft, TKey> left,
-            OrderedEnumerable<TRight, TKey> right,
-            Func<TLeft, TRight, TResult> resultSelector,
-            Func<TKey, TKey, int> compare)
+        private static IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(
+            IEnumerable<TOuter> outer,
+            IEnumerable<TInner> inner,
+            Func<TOuter, TKey> outerKeySelector,
+            Func<TInner, TKey> innerKeySelector,
+            Func<TOuter, TInner, TResult> resultSelector,
+            IComparer<TKey> keyComparer)
         {
-            using (var leftEnumerator = left.Source.GetEnumerator())
-            using (var rightEnumerator = right.Source.GetEnumerator())
+            using (var leftEnumerator = outer.GetEnumerator())
+            using (var rightEnumerator = inner.GetEnumerator())
             {
-                EnumeratorState<TLeft> leftState = leftEnumerator.Next();
-                EnumeratorState<TRight> rightState = rightEnumerator.Next();
+                EnumeratorState<TOuter> leftState = leftEnumerator.Next();
+                EnumeratorState<TInner> rightState = rightEnumerator.Next();
                 
                 while (leftState.HasCurrent && rightState.HasCurrent)
                 {
-                    switch(compare(left.KeySelector(leftState.Current), right.KeySelector(rightState.Current)))
+                    switch(keyComparer.Compare(outerKeySelector(leftState.Current), innerKeySelector(rightState.Current)))
                     {
                         case -1:
                             leftState = leftEnumerator.Next();
@@ -42,18 +51,18 @@ namespace Linqor
                         case 0:
                             yield return resultSelector(leftState.Current, rightState.Current);
 
-                            TKey currentRightKey = right.KeySelector(rightState.Current);
-                            List<TRight> elements = new List<TRight> { rightState.Current };
-                            foreach(TRight rightItem in rightEnumerator.TakeWhile(current => compare(currentRightKey, right.KeySelector(current)) == 0, last => rightState = last))
+                            TKey currentRightKey = innerKeySelector(rightState.Current);
+                            List<TInner> elements = new List<TInner> { rightState.Current };
+                            foreach(TInner rightItem in rightEnumerator.TakeWhile(current => keyComparer.Compare(currentRightKey, innerKeySelector(current)) == 0, last => rightState = last))
                             {
                                 elements.Add(rightItem);
                                 yield return resultSelector(leftState.Current, rightItem);
                             }
 
-                            TKey currentLeftKey = left.KeySelector(leftState.Current);
-                            foreach (var leftItem in leftEnumerator.TakeWhile(current => compare(currentLeftKey, left.KeySelector(current)) == 0, last => leftState = last))
+                            TKey currentLeftKey = outerKeySelector(leftState.Current);
+                            foreach (var leftItem in leftEnumerator.TakeWhile(current => keyComparer.Compare(currentLeftKey, outerKeySelector(current)) == 0, last => leftState = last))
                             {
-                                foreach(TRight rightItem in elements)
+                                foreach(TInner rightItem in elements)
                                 {
                                     yield return resultSelector(leftItem, rightItem);
                                 }

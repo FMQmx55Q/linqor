@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using static Linqor.Tests.Helpers;
 
 namespace Linqor.Tests
 {
@@ -13,10 +13,10 @@ namespace Linqor.Tests
         {
             return Extensions
                 .GroupJoin(
-                    left.AsOrderedBy(Helpers.ID),
-                    right.AsOrderedBy(Helpers.ID),
-                    (l, r) => $"{l}: [ {string.Join(", ", r)} ]",
-                    (l, r) => l.CompareTo(r))
+                    left.AsOrderedBy(NumberInString),
+                    right.AsOrderedBy(NumberInString),
+                    (x, y) => $"{x}: [ {string.Join(", ", y)} ]",
+                    r => NumberInString(r.Substring(0, r.IndexOf(':'))))
                 .ToArray();
         }
 
@@ -41,10 +41,12 @@ namespace Linqor.Tests
             };
 
             var linqTestCases = testCases
-                .Select(c => (c.Item1, c.Item2, Enumerable.GroupJoin(
-                    c.Item1, c.Item2,
-                    Helpers.ID, Helpers.ID,
-                    (l, r) => $"{l}: [ {string.Join(", ", r)} ]").ToArray()));
+                .Select(c => (c.Item1, c.Item2, Enumerable
+                    .GroupJoin(
+                        c.Item1, c.Item2,
+                        NumberInString, NumberInString,
+                        (l, r) => $"{l}: [ {string.Join(", ", r)} ]")
+                    .ToArray()));
 
             return testCases
                 .Select((c, index) => new TestCaseData(c.Item1, c.Item2).Returns(c.Item3).SetName($"GroupJoin {Helpers.Get2DID(index, testCases.Length)}"));

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using static Linqor.Tests.Helpers;
 
 namespace Linqor.Tests
 {
@@ -11,9 +11,9 @@ namespace Linqor.Tests
         [TestCaseSource(nameof(GetTestCases))]
         public string[] Distinct(string[] source)
         {
-            return Extensions.Distinct(
-                source.AsOrderedBy(),
-                (l, r) => l.ID().Equals(r.ID())).ToArray();
+            return Extensions
+                .Distinct(source.AsOrderedBy(NumberInString))
+                .ToArray();
         }
 
         public static IEnumerable<TestCaseData> GetTestCases()
@@ -27,7 +27,9 @@ namespace Linqor.Tests
             };
             
             var linqTestCases = testCases
-                .Select(c => (c.Item1, c.Item1.Distinct(Helpers.ByID).ToArray()));
+                .Select(c => (c.Item1, Enumerable
+                    .Distinct(c.Item1, new NumberInStringComparer())
+                    .ToArray()));
 
             return testCases.Concat(linqTestCases)
                 .Select((c, index) => new TestCaseData((object)c.Item1).Returns(c.Item2).SetName($"Distinct {Helpers.Get2DID(index, testCases.Length)}"));

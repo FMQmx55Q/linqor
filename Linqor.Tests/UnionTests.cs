@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using static Linqor.Tests.Helpers;
 
 namespace Linqor.Tests
 {
@@ -11,10 +11,11 @@ namespace Linqor.Tests
         [TestCaseSource(nameof(GetTestCases))]
         public string[] Union(string[] left, string[] right)
         {
-            return Extensions.Union(
-                left.AsOrderedBy(),
-                right.AsOrderedBy(),
-                (l, r) => l.ID().CompareTo(r.ID())).ToArray();
+            return Extensions
+                .Union(
+                    left.AsOrderedBy(NumberInString),
+                    right.AsOrderedBy(NumberInString))
+                .ToArray();
         }
 
         public static IEnumerable<TestCaseData> GetTestCases()
@@ -38,7 +39,10 @@ namespace Linqor.Tests
             };
 
             var linqTestCases = testCases
-                .Select(c => (c.Item1, c.Item2, c.Item1.Union(c.Item2, Helpers.ByID).OrderBy(Helpers.ID).ToArray()));
+                .Select(c => (c.Item1, c.Item2, Enumerable
+                    .Union(c.Item1, c.Item2, new NumberInStringComparer())
+                    .OrderBy(NumberInString)
+                    .ToArray()));
 
             return testCases.Concat(linqTestCases)
                 .Select((c, index) => new TestCaseData(c.Item1, c.Item2).Returns(c.Item3).SetName($"Union {Helpers.Get2DID(index, testCases.Length)}"));

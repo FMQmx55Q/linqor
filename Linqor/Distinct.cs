@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Linqor
 {
@@ -8,25 +7,25 @@ namespace Linqor
         /// <summary>
         /// Returns distinct elements from an ordered sequence.
         /// </summary>
-        public static IEnumerable<T> Distinct<T, TKey>(this OrderedEnumerable<T, TKey> source)
-            where TKey : IEquatable<TKey> 
+        public static OrderedEnumerable<T, TKey> Distinct<T, TKey>(
+            this OrderedEnumerable<T, TKey> source)
         {
-            return source.Distinct((l, r) => l.Equals(r));
+            return Distinct<T>(source, source.Comparer)
+                .AsOrderedLike(source);
         }
 
-        /// <summary>
-        /// Returns distinct elements from an ordered sequence.
-        /// </summary>
-        public static IEnumerable<T> Distinct<T, TKey>(this OrderedEnumerable<T, TKey> source, Func<TKey, TKey, bool> equals)
+        private static IEnumerable<T> Distinct<T>(
+            IEnumerable<T> source,
+            IComparer<T> comparer)
         {
-            using (var enumerator = source.Source.GetEnumerator())
+            using (var enumerator = source.GetEnumerator())
             {
                 EnumeratorState<T> state = enumerator.Next();
 
                 while (state.HasCurrent)
                 {
                     yield return state.Current;
-                    state = enumerator.SkipWhile(current => equals(source.KeySelector(state.Current), source.KeySelector(current)));
+                    state = enumerator.SkipWhile(current => comparer.Compare(state.Current, current) == 0);
                 }
             }
         }

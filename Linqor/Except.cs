@@ -8,40 +8,40 @@ namespace Linqor
         /// <summary>
         /// Produces the difference of two ordered sequences.
         /// </summary>
-        public static IEnumerable<T> Except<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right)
-            where TKey : IComparable<TKey>
+        public static OrderedEnumerable<T, TKey> Except<T, TKey>(
+            this OrderedEnumerable<T, TKey> left,
+            OrderedEnumerable<T, TKey> right)
         {
-            return left.Except(right, (l, r) => l.CompareTo(r));
+            return Except(left, right, left.Comparer)
+                .AsOrderedLike(left)
+                .Distinct();
         }
         
         /// <summary>
         /// Produces the difference of two ordered sequences.
         /// </summary>
-        public static IEnumerable<T> Except<T, TKey>(this OrderedEnumerable<T, TKey> left, OrderedEnumerable<T, TKey> right, Func<TKey, TKey, int> compare)
+        private static IEnumerable<T> Except<T>(
+            IEnumerable<T> left,
+            IEnumerable<T> right,
+            IComparer<T> comparer)
         {
-            left = left.Distinct((l, r) => compare(l, r) == 0).AsOrderedBy(left.KeySelector);
-            right = right.Distinct((l, r) => compare(l, r) == 0).AsOrderedBy(right.KeySelector);
-
-            using (var leftEnumerator = left.Source.GetEnumerator())
-            using (var rightEnumerator = right.Source.GetEnumerator())
+            using (var leftEnumerator = left.GetEnumerator())
+            using (var rightEnumerator = right.GetEnumerator())
             {
                 EnumeratorState<T> leftState = leftEnumerator.Next();
                 EnumeratorState<T> rightState = rightEnumerator.Next();
 
                 while (leftState.HasCurrent && rightState.HasCurrent)
                 {
-                    switch(compare(left.KeySelector(leftState.Current), right.KeySelector(rightState.Current)))
+                    switch(comparer.Compare(leftState.Current, rightState.Current))
                     {
                         case -1:
                             yield return leftState.Current;
                             leftState = leftEnumerator.Next();
                             break;
                         case 0:
-                            var leftKey = left.KeySelector(leftState.Current);
-                            leftState = leftEnumerator.SkipWhile(current => compare(leftKey, left.KeySelector(current)) == 0);
-                            
-                            var rightKey = right.KeySelector(rightState.Current);
-                            rightState = rightEnumerator.SkipWhile(current => compare(rightKey, right.KeySelector(current)) == 0);
+                            leftState = leftEnumerator.SkipWhile(current => comparer.Compare(leftState.Current, current) == 0);
+                            rightState = rightEnumerator.SkipWhile(current => comparer.Compare(rightState.Current, current) == 0);
                             break;
                         case 1:
                             rightState = rightEnumerator.Next();

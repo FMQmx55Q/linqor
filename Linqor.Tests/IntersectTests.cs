@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using static Linqor.Tests.Helpers;
 
 namespace Linqor.Tests
 {
@@ -11,10 +11,11 @@ namespace Linqor.Tests
         [TestCaseSource(nameof(GetTestCases))]
         public string[] Intersect(string[] left, string[] right)
         {
-            return Extensions.Intersect(
-                left.AsOrderedBy(),
-                right.AsOrderedBy(),
-                (l, r) => l.ID().CompareTo(r.ID())).ToArray();
+            return Extensions
+                .Intersect(
+                    left.AsOrderedBy(NumberInString),
+                    right.AsOrderedBy(NumberInString))
+                .ToArray();
         }
         public static IEnumerable<TestCaseData> GetTestCases()
         {
@@ -37,7 +38,9 @@ namespace Linqor.Tests
             };
 
             var linqTestCases = testCases
-                .Select(c => (c.Item1, c.Item2, c.Item1.Intersect(c.Item2, Helpers.ByID).ToArray()));
+                .Select(c => (c.Item1, c.Item2, Enumerable
+                    .Intersect(c.Item1, c.Item2, new NumberInStringComparer())
+                    .ToArray()));
 
             return testCases.Concat(linqTestCases)
                 .Select((c, index) => new TestCaseData(c.Item1, c.Item2).Returns(c.Item3).SetName($"Intersect {Helpers.Get2DID(index, testCases.Length)}"));
