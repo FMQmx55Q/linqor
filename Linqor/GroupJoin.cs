@@ -22,7 +22,7 @@ namespace Linqor
                     inner.KeySelector,
                     (outerKey, innerSubset) => resultSelector(outerKey, innerSubset.AsOrderedLike(inner)),
                     outer.KeyComparer)
-                .AsOrderedLike(outer, resultKeySelector);
+                .AsOrderedLike(resultKeySelector, outer);
         }
 
         /// <summary>

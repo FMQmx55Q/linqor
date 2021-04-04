@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Version>2.0.2</Version>
+        <Version>3.0.0</Version>
         <Title>Linqor</Title>
         <Authors>Andrew Morozov</Authors>
         <Copyright>Andrew Morozov</Copyright>
@@ -17,7 +17,12 @@
         <RepositoryUrl>https://github.com/dangerozov/linqor</RepositoryUrl>
 
         <LangVersion>9.0</LangVersion>
-        <TargetFrameworks>netstandard1.6;net45</TargetFrameworks>
+        <TargetFrameworks>netstandard1.6</TargetFrameworks>
         <NetStandardImplicitPackageVersion>1.6</NetStandardImplicitPackageVersion>
     </PropertyGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Linqor.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
 </Project>

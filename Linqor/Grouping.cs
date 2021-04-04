@@ -7,27 +7,17 @@ namespace Linqor
     internal class Grouping<TKey, TElement> : IGrouping<TKey, TElement>
     {
         private readonly TKey _key;
-        private readonly IReadOnlyList<TElement> _elements;
+        private readonly IEnumerable<TElement> _elements;
 
-        public Grouping(TKey key, IReadOnlyList<TElement> elements)
+        public Grouping(TKey key, IEnumerable<TElement> elements)
         {
             _key = key;
             _elements = elements;
         }
 
-        public TKey Key
-        {
-            get { return _key; }
-        }
+        public TKey Key => _key;
 
-        public IEnumerator<TElement> GetEnumerator()
-        {
-            return _elements.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _elements.GetEnumerator();
-        }
+        public IEnumerator<TElement> GetEnumerator() => _elements.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

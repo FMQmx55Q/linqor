@@ -21,4 +21,14 @@ namespace Linqor.Tests
         public int GetHashCode([DisallowNull] string obj) =>
             NumberInString(obj).GetHashCode();
     }
+
+    public class IntComparer : IComparer<int>
+    {
+        public int Compare(int x, int y) => x.CompareTo(y);
+    }
+
+    public class StringComparer : IComparer<string>
+    {
+        public int Compare(string x, string y) => x.CompareTo(y);
+    }
 }

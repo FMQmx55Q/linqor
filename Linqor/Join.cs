@@ -21,7 +21,7 @@ namespace Linqor
                     inner.KeySelector,
                     resultSelector,
                     outer.KeyComparer)
-                .AsOrderedLike(outer, resultKeySelector);
+                .AsOrderedLike(resultKeySelector, outer);
         }
         
         /// <summary>
