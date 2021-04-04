@@ -26,10 +26,10 @@ namespace Linqor
             _comparer = new OrderedComparer<T, TKey>(keySelector, keyComparer, descending);
         }
 
-        public Func<T, TKey> KeySelector => _keySelector;
-        public IComparer<TKey> KeyComparer => _keyComparer;
-        public bool Descending => _descending;
-        public IComparer<T> Comparer => _comparer;
+        internal Func<T, TKey> KeySelector => _keySelector;
+        internal IComparer<TKey> KeyComparer => _keyComparer;
+        internal bool Descending => _descending;
+        internal IComparer<T> Comparer => _comparer;
 
         public virtual IEnumerator<T> GetEnumerator() => _source.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
