@@ -14,4 +14,5 @@ new[] { 1, 3, 5 }.AsOrderedBy(x => x).Concat(new[] { 2, 4, 6 }.AsOrderedBy(x => 
 ```
 ## Difference to LINQ API
 No `IComparer<T> comparer` or `Func<T, TKey> keySelector` parameters. `OrderedEnumerable<T, TKey>` ones are used instead.
+
 `GroupJoin` and `Join` require additional `Func<TResult, TKey> resultKeySelector` parameter to construct `OrderedEnumerable<TResult, TKey>`.
