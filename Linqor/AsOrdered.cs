@@ -6,22 +6,52 @@ namespace Linqor
 {
     public static partial class Extensions
     {
+        /// <summary>
+        /// Wraps a sequence ordered in ascending order according to a key.
+        /// </summary>
+        /// <param name="source">An ordered sequence of values.</param>
+        /// <param name="keySelector">A function to extract key from an element.</param>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
         public static OrderedEnumerable<T, TKey> AsOrderedBy<T, TKey>(
             this IEnumerable<T> source,
             Func<T, TKey> keySelector) =>
             new OrderedEnumerable<T, TKey>(source, keySelector, Comparer<TKey>.Default, false);
 
+        /// <summary>
+        /// Wraps a sequence ordered in ascending order by using a specified comparer.
+        /// </summary>
+        /// <param name="source">An ordered sequence of values.</param>
+        /// <param name="keySelector">A function to extract key from an element.</param>
+        /// <param name="keyComparer">An System.Collections.Generic.IComparer`1 to compare keys.</param>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
         public static OrderedEnumerable<T, TKey> AsOrderedBy<T, TKey>(
             this IEnumerable<T> source,
             Func<T, TKey> keySelector,
             IComparer<TKey> keyComparer) =>
             new OrderedEnumerable<T, TKey>(source, keySelector, keyComparer, false);
 
+        /// <summary>
+        /// Wraps a sequence ordered in descending order according to a key.
+        /// </summary>
+        /// <param name="source">An ordered sequence of values.</param>
+        /// <param name="keySelector">A function to extract key from an element.</param>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
         public static OrderedEnumerable<T, TKey> AsOrderedByDescending<T, TKey>(
             this IEnumerable<T> source,
             Func<T, TKey> keySelector) =>
             new OrderedEnumerable<T, TKey>(source, keySelector, Comparer<TKey>.Default, true);
 
+        /// <summary>
+        /// Wraps a sequence ordered in descending order by using a specified comparer.
+        /// </summary>
+        /// <param name="source">An ordered sequence of values.</param>
+        /// <param name="keySelector">A function to extract key from an element.</param>
+        /// <param name="keyComparer">An System.Collections.Generic.IComparer`1 to compare keys.</param>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
         public static OrderedEnumerable<T, TKey> AsOrderedByDescending<T, TKey>(
             this IEnumerable<T> source,
             Func<T, TKey> keySelector,

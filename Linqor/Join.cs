@@ -7,7 +7,14 @@ namespace Linqor
     {
         /// <summary>
         /// Correlates the elements of two ordered sequences based on matching keys.
+        /// Comparer from the first sequence is used to compare keys.
         /// </summary>
+        /// <param name="outer">The first sequence to join.</param>
+        /// <param name="inner">The sequence to join to the first sequence.</param>
+        /// <param name="resultSelector">
+        /// A function to create a result element from two matching elements.
+        /// </param>
+        /// <param name="resultKeySelector">A function to extract key from a result element.</param>
         public static OrderedEnumerable<TResult, TKey> Join<TOuter, TInner, TKey, TResult>(
             this OrderedEnumerable<TOuter, TKey> outer,
             OrderedEnumerable<TInner, TKey> inner,
