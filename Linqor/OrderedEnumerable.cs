@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Linqor
 {
-    public class OrderedEnumerable<T, TKey> : IOrderedEnumerable<T>
+    public class OrderedEnumerable<T, TKey> : IEnumerable<T>
     {
         private readonly IEnumerable<T> _source;
         private readonly Func<T, TKey> _keySelector;
@@ -34,21 +34,5 @@ namespace Linqor
 
         public virtual IEnumerator<T> GetEnumerator() => _source.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey2>(
-            Func<T, TKey2> keySelector,
-            IComparer<TKey2> comparer,
-            bool descending)
-        {
-            var orderedBy = !_descending
-                ? _source.OrderBy(_keySelector, _keyComparer)
-                : _source.OrderByDescending(_keySelector, _keyComparer);
-            
-            var thenBy = !descending
-                ? orderedBy.ThenBy(keySelector, comparer)
-                : orderedBy.ThenByDescending(keySelector, comparer);
-
-            return thenBy;
-        }
     }
 }
