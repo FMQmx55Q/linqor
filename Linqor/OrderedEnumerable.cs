@@ -32,7 +32,20 @@ namespace Linqor
         internal bool Descending => _descending;
         internal IComparer<T> Comparer => _comparer;
 
-        public virtual IEnumerator<T> GetEnumerator() => _source.GetEnumerator();
+        public virtual IEnumerator<T> GetEnumerator()
+        {
+            (bool HasValue, T Value) previous = default;
+            foreach (var current in _source)
+            {
+                if (previous.HasValue && _comparer.Compare(previous.Value, current) > 0)
+                    throw new UnorderedElementDetectedException();
+
+                yield return current;
+
+                previous = (true, current);
+            }
+        }
+
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

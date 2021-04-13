@@ -7,22 +7,14 @@ namespace Linqor.Tests
     [TestFixture]
     public class OrderedEnumerableTests
     {
-        [TestCaseSource(nameof(GetTestCases))]
-        public IEnumerable<int> GetEnumerator(
-            int[] source)
+        [Test]
+        public void UnorderedDetection()
         {
-            return source.AsOrderedBy(n => n);
-        }
-
-        private static IEnumerable<TestCaseData> GetTestCases()
-        {
-            var testCases = new[]
-            {
-                new[] { 1, 2, 3, 4, 5 },
-                new[] { 3, 5, 1, 4, 2 }
-            };
-
-            return testCases.Select(c => new TestCaseData(c).Returns(c));
+            Assert.That(
+                () => new[] { 3, 5, 1, 4, 2 }
+                    .AsOrderedBy(x => x)
+                    .ToArray(),
+                Throws.TypeOf<UnorderedElementDetectedException>());
         }
     }
 }
