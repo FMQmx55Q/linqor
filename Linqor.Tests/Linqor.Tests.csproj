@@ -5,11 +5,11 @@
         <TargetFramework>netcoreapp3.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.TEst.Sdk" Version="15.3.0-preview-20170601-03"/>
-        <PackageReference Include="NUnit" Version="3.7.1" />
-        <PackageReference Include="NUnit3TestAdapter" Version="3.8.0-alpha1" />
+        <PackageReference Include="Microsoft.NET.TEst.Sdk" Version="16.9.4" />
+        <PackageReference Include="NUnit" Version="3.13.1" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
 
-        <PackageReference Include="System.ValueTuple" Version="4.4.0-preview1-25305-02" />
+        <PackageReference Include="System.ValueTuple" Version="4.5.0" />
 
         <ProjectReference Include="..\Linqor\Linqor.csproj" />
     </ItemGroup>
