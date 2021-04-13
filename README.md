@@ -18,18 +18,5 @@ No `IComparer<T> comparer` or `Func<T, TKey> keySelector` parameters. Ones from 
 
 `GroupJoin` and `Join` require additional `Func<TResult, TKey> resultKeySelector` parameter to construct `OrderedEnumerable<TResult, TKey>`.
 
-## ThenBy and ThenByDescending
-`OrderedEnumerable<T, TKey>` implements `IOrderedEnumerable<T>` interface and supports `ThenBy<T>` and `ThenByDescending<T>`.
-
-```csharp
-int FirstNumber(string s) => int.Parse(s.Substring(0, 1));
-int SecondNumber(string s) => int.Parse(s.Substring(1, 1));
-
-new[] { "21", "11", "31", "22", "02" }
-    .AsOrderedBy(SecondNumber)
-    .ThenBy(FirstNumber)
-// ["11", "21", "31", "02", "22"]
-```
-
 ## Why OrderedEnumerable\<T, TKey\> class and not IOrderedEnumerable\<T\>
 Algorithms require `IComparer<T>` that was used to order the enumerable. Sadly `System.Linq.OrderedEnumerable` is `internal` and `IOrderedEnumerable<T>` doesn't have `IComparer<T>`.
