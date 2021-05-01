@@ -14,7 +14,7 @@ namespace Linqor.Tests
             return Extensions
                 .Intersect(
                     left.AsOrderedBy(NumberInString),
-                    right.AsOrderedBy(NumberInString))
+                    right)
                 .ToArray();
         }
         public static IEnumerable<TestCaseData> GetTestCases()

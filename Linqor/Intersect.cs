@@ -10,11 +10,11 @@ namespace Linqor
         /// </summary>
         public static IEnumerable<T> Intersect<T, TKey>(
             this OrderedEnumerable<T, TKey> left,
-            OrderedEnumerable<T, TKey> right)
+            IEnumerable<T> right)
         {
-            return Intersect(left, right, left.Comparer)
+            return Intersect(left, right.AsOrderedLike(left), left.Comparer)
                 .AsOrderedLike(left)
-                .Distinct();                
+                .Distinct();
         }
 
         private static IEnumerable<T> Intersect<T>(

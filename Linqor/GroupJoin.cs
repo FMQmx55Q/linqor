@@ -17,25 +17,23 @@ namespace Linqor
         /// and a collection of matching elements from the second sequence.
         /// </param>
         /// <param name="resultKeySelector">A function to extract key from a result element.</param>
-        public static OrderedEnumerable<TResult, TKey> GroupJoin<TLeft, TRight, TKey, TResult>(
-            this OrderedEnumerable<TLeft, TKey> outer,
-            OrderedEnumerable<TRight, TKey> inner,
-            Func<TLeft, OrderedEnumerable<TRight, TKey>, TResult> resultSelector,
+        public static OrderedEnumerable<TResult, TKey> GroupJoin<TOuter, TInner, TKey, TResult>(
+            this OrderedEnumerable<TOuter, TKey> outer,
+            IEnumerable<TInner> inner,
+            Func<TInner, TKey> innerKeySelector,
+            Func<TOuter, OrderedEnumerable<TInner, TKey>, TResult> resultSelector,
             Func<TResult, TKey> resultKeySelector)
         {
             return GroupJoin(
                     outer,
-                    inner,
+                    inner.AsOrderedLike(innerKeySelector, outer),
                     outer.KeySelector,
-                    inner.KeySelector,
-                    (outerKey, innerSubset) => resultSelector(outerKey, innerSubset.AsOrderedLike(inner)),
+                    innerKeySelector,
+                    (outerKey, innerSubset) => resultSelector(outerKey, innerSubset.AsOrderedLike(innerKeySelector, outer)),
                     outer.KeyComparer)
                 .AsOrderedLike(resultKeySelector, outer);
         }
 
-        /// <summary>
-        /// Correlates the elements of two ordered sequences based on key equality, and groups the results.
-        /// </summary>
         private static IEnumerable<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(
             IEnumerable<TOuter> outer,
             IEnumerable<TInner> inner,

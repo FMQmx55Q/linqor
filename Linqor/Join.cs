@@ -17,23 +17,21 @@ namespace Linqor
         /// <param name="resultKeySelector">A function to extract key from a result element.</param>
         public static OrderedEnumerable<TResult, TKey> Join<TOuter, TInner, TKey, TResult>(
             this OrderedEnumerable<TOuter, TKey> outer,
-            OrderedEnumerable<TInner, TKey> inner,
+            IEnumerable<TInner> inner,
+            Func<TInner, TKey> innerKeySelector,
             Func<TOuter, TInner, TResult> resultSelector,
             Func<TResult, TKey> resultKeySelector)
         {
             return Join(
                     outer,
-                    inner,
+                    inner.AsOrderedLike(innerKeySelector, outer),
                     outer.KeySelector,
-                    inner.KeySelector,
+                    innerKeySelector,
                     resultSelector,
                     outer.KeyComparer)
                 .AsOrderedLike(resultKeySelector, outer);
         }
-        
-        /// <summary>
-        /// Correlates the elements of two ordered sequences based on matching keys.
-        /// </summary>
+
         private static IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(
             IEnumerable<TOuter> outer,
             IEnumerable<TInner> inner,

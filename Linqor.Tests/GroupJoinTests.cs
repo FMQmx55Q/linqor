@@ -14,7 +14,8 @@ namespace Linqor.Tests
             return Extensions
                 .GroupJoin(
                     left.AsOrderedBy(NumberInString),
-                    right.AsOrderedBy(NumberInString),
+                    right,
+                    NumberInString,
                     (x, y) => $"{x}: [ {string.Join(", ", y)} ]",
                     r => NumberInString(r.Substring(0, r.IndexOf(':'))))
                 .ToArray();

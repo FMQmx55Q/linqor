@@ -14,7 +14,7 @@ namespace Linqor.Tests
             return Extensions
                 .Except(
                     left.AsOrderedBy(NumberInString),
-                    right.AsOrderedBy(NumberInString))
+                    right)
                 .ToArray();
         }
 

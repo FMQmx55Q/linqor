@@ -15,10 +15,7 @@ namespace Linqor
             return GroupBy(source, source.KeySelector, source.KeyComparer)
                 .AsOrderedLike(source);
         }
-        
-        /// <summary>
-        /// Groups the elements of an ordered sequence.
-        /// </summary>
+
         private static IEnumerable<IGrouping<TKey, T>> GroupBy<T, TKey>(
             IEnumerable<T> source,
             Func<T, TKey> keySelector,

@@ -10,15 +10,12 @@ namespace Linqor
         /// </summary>
         public static OrderedEnumerable<T, TKey> Union<T, TKey>(
             this OrderedEnumerable<T, TKey> left,
-            OrderedEnumerable<T, TKey> right)
+            IEnumerable<T> right)
         {
-            return Union(left, right, left.Comparer)
+            return Union(left, right.AsOrderedLike(left), left.Comparer)
                 .AsOrderedLike(left);
         }
-        
-        /// <summary>
-        /// Produces the union of two ordered sequences.
-        /// </summary>
+
         private static IEnumerable<T> Union<T>(
             IEnumerable<T> left,
             IEnumerable<T> right,

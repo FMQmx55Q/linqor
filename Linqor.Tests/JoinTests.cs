@@ -14,7 +14,8 @@ namespace Linqor.Tests
             return Extensions
                 .Join(
                     left.AsOrderedBy(NumberInString),
-                    right.AsOrderedBy(NumberInString),
+                    right,
+                    NumberInString,
                     (x, y) => $"{x} {y}",
                     r => NumberInString(r.Split(' ')[0]))
                 .ToArray();

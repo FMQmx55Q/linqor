@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Linqor
 {
@@ -10,16 +9,13 @@ namespace Linqor
         /// </summary>
         public static OrderedEnumerable<T, TKey> Except<T, TKey>(
             this OrderedEnumerable<T, TKey> left,
-            OrderedEnumerable<T, TKey> right)
+            IEnumerable<T> right)
         {
-            return Except(left, right, left.Comparer)
+            return Except(left, right.AsOrderedLike(left), left.Comparer)
                 .AsOrderedLike(left)
                 .Distinct();
         }
-        
-        /// <summary>
-        /// Produces the difference of two ordered sequences.
-        /// </summary>
+
         private static IEnumerable<T> Except<T>(
             IEnumerable<T> left,
             IEnumerable<T> right,

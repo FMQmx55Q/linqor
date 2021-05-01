@@ -16,7 +16,7 @@ namespace Linqor
         public static OrderedEnumerable<T, TKey> AsOrderedBy<T, TKey>(
             this IEnumerable<T> source,
             Func<T, TKey> keySelector) =>
-            new OrderedEnumerable<T, TKey>(source, keySelector, Comparer<TKey>.Default, false);
+            new OrderedEnumerable<T, TKey>(source, keySelector, Comparer<TKey>.Default, descending: false);
 
         /// <summary>
         /// Wraps a sequence ordered in ascending order by using a specified comparer.
@@ -30,7 +30,7 @@ namespace Linqor
             this IEnumerable<T> source,
             Func<T, TKey> keySelector,
             IComparer<TKey> keyComparer) =>
-            new OrderedEnumerable<T, TKey>(source, keySelector, keyComparer, false);
+            new OrderedEnumerable<T, TKey>(source, keySelector, keyComparer, descending: false);
 
         /// <summary>
         /// Wraps a sequence ordered in descending order according to a key.
@@ -42,7 +42,7 @@ namespace Linqor
         public static OrderedEnumerable<T, TKey> AsOrderedByDescending<T, TKey>(
             this IEnumerable<T> source,
             Func<T, TKey> keySelector) =>
-            new OrderedEnumerable<T, TKey>(source, keySelector, Comparer<TKey>.Default, true);
+            new OrderedEnumerable<T, TKey>(source, keySelector, Comparer<TKey>.Default, descending: true);
 
         /// <summary>
         /// Wraps a sequence ordered in descending order by using a specified comparer.
@@ -56,7 +56,7 @@ namespace Linqor
             this IEnumerable<T> source,
             Func<T, TKey> keySelector,
             IComparer<TKey> keyComparer) =>
-            new OrderedEnumerable<T, TKey>(source, keySelector, keyComparer, true);
+            new OrderedEnumerable<T, TKey>(source, keySelector, keyComparer, descending: true);
 
         internal static OrderedEnumerable<T, TKey> AsOrderedLike<T, TKey>(
             this IEnumerable<T> source,

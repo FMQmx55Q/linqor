@@ -9,9 +9,9 @@ namespace Linqor
         /// </summary>
         public static OrderedEnumerable<T, TKey> Concat<T, TKey>(
             this OrderedEnumerable<T, TKey> left,
-            OrderedEnumerable<T, TKey> right)
+            IEnumerable<T> right)
         {
-            return Concat(left, right, left.Comparer)
+            return Concat(left, right.AsOrderedLike(left), left.Comparer)
                 .AsOrderedLike(left);
         }
 

@@ -14,7 +14,7 @@ namespace Linqor.Tests
             return Extensions
                 .Concat(
                     left.AsOrderedBy(NumberInString),
-                    right.AsOrderedBy(NumberInString))
+                    right)
                 .ToArray();
         }
 
