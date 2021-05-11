@@ -52,5 +52,31 @@ namespace Linqor.Tests
             return testCases
                 .Select((c, index) => new TestCaseData(c.Item1, c.Item2).Returns(c.Item3).SetName($"Join {Helpers.Get2DID(index, testCases.Length)}"));
         }
+
+        [TestCaseSource(nameof(GetErrorCases))]
+        public void JoinError(string[] left, string[] right)
+        {
+            var result = Extensions
+                .Join(
+                    left.AsOrderedBy(NumberInString),
+                    right,
+                    NumberInString,
+                    (x, y) => $"{x} {y}",
+                    r => NumberInString(r.Split(' ')[0]));
+
+            Assert.That(() => result.ToArray(), Throws.TypeOf<UnorderedElementDetectedException>());
+        }
+
+        private static IEnumerable<TestCaseData> GetErrorCases()
+        {
+            var exceptionTestCases = new[]
+            {
+                (new[] { "L0", "L1" }, new[] { "R1", "R0" }),
+                (new[] { "L1", "L0" }, new[] { "R0", "R1" }),
+            };
+
+            return exceptionTestCases
+                .Select(c => new TestCaseData(c.Item1, c.Item2));
+        }
     }
 }

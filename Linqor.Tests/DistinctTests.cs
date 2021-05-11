@@ -34,5 +34,26 @@ namespace Linqor.Tests
             return testCases.Concat(linqTestCases)
                 .Select((c, index) => new TestCaseData((object)c.Item1).Returns(c.Item2).SetName($"Distinct {Helpers.Get2DID(index, testCases.Length)}"));
         }
+
+        [TestCaseSource(nameof(GetErrorCases))]
+        public void DistinctError(string[] left)
+        {
+            var result = Extensions
+                .Distinct(left.AsOrderedBy(NumberInString));
+
+            Assert.That(() => result.ToArray(), Throws.TypeOf<UnorderedElementDetectedException>());
+        }
+
+        private static IEnumerable<TestCaseData> GetErrorCases()
+        {
+            var exceptionTestCases = new[]
+            {
+                new[] { "L2", "L0", "L1" },
+                new[] { "L2", "L1", "L1", "L0" },
+            };
+
+            return exceptionTestCases
+                .Select(c => new TestCaseData((object)c));
+        }
     }
 }

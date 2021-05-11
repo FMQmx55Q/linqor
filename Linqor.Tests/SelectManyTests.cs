@@ -9,13 +9,13 @@ namespace Linqor.Tests
     public class SelectManyTests
     {
         [TestCaseSource(nameof(GetTestCases))]
-        public string[] SelectMany(string[] source, string[][] result)
+        public string[] SelectMany(string[] source, string[][] selectorResult)
         {
             return Extensions
                 .SelectMany(
                     source.AsOrderedBy(NumberInString),
                     new string[] { }.AsOrderedBy(NumberInString),
-                    (item, index) => result[index].AsOrderedBy(NumberInString))
+                    (item, index) => selectorResult[index].AsOrderedBy(NumberInString))
                 .ToArray();
         }
 
@@ -40,6 +40,31 @@ namespace Linqor.Tests
                 .Select((c, index) => new TestCaseData(c.Item1, c.Item2)
                     .Returns(c.Item3)
                     .SetName($"SelectMany {Helpers.Get2DID(index, testCases.Length)}"));
+        }
+
+        [TestCaseSource(nameof(GetErrorCases))]
+        public void SelectManyError(string[] source, string[][] selectorResult)
+        {
+            var result = Extensions
+                .SelectMany(
+                    source.AsOrderedBy(NumberInString),
+                    new string[] { }.AsOrderedBy(NumberInString),
+                    (item, index) => selectorResult[index].AsOrderedBy(NumberInString));
+
+            Assert.That(() => result.ToArray(), Throws.TypeOf<UnorderedElementDetectedException>());
+        }
+
+        private static IEnumerable<TestCaseData> GetErrorCases()
+        {
+            var exceptionTestCases = new[]
+            {
+                (new[] { "L0", "L1" }, new[] { new[] { "R1", "R0" }, new[] { "R1", "R2" } }),
+                (new[] { "L0", "L1" }, new[] { new[] { "R0", "R1" }, new[] { "R2", "R1" } }),
+                (new[] { "L1", "L0" }, new[] { new[] { "R0", "R1" }, new[] { "R1", "R2" } }),
+            };
+
+            return exceptionTestCases
+                .Select(c => new TestCaseData(c.Item1, c.Item2));
         }
     }
 }
