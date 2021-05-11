@@ -6,6 +6,6 @@ install:
 - dotnet restore Linqor.Tests
 
 script:
-- dotnet build Linqor -f netstandard1.6
+- dotnet build Linqor
 - dotnet build Linqor.Tests
 - cd Linqor.Tests && dotnet test
