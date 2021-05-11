@@ -8,15 +8,22 @@ namespace Linqor
     {
         /// <summary>
         /// Correlates the elements of two ordered sequences based on key equality and groups the results.
-        /// Comparer from the first sequence is used to compare keys.
         /// </summary>
-        /// <param name="outer">The first sequence to join.</param>
-        /// <param name="inner">The sequence to join to the first sequence.</param>
+        /// <param name="outer">The first ordered sequence to join.</param>
+        /// <param name="inner">
+        /// The sequence that follows same ordering rules as the first sequence
+        /// to join to the first sequence.
+        /// </param>
+        /// <param name="innerKeySelector">
+        /// A function to extract the join key from each element of the second sequence.
+        /// </param>
         /// <param name="resultSelector">
         /// A function to create a result element from an element from the first sequence
         /// and a collection of matching elements from the second sequence.
         /// </param>
-        /// <param name="resultKeySelector">A function to extract key from a result element.</param>
+        /// <param name="resultKeySelector">
+        /// A function to extract the key from each element of the result sequence.
+        /// </param>
         public static OrderedEnumerable<TResult, TKey> GroupJoin<TOuter, TInner, TKey, TResult>(
             this OrderedEnumerable<TOuter, TKey> outer,
             IEnumerable<TInner> inner,

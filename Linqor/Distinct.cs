@@ -7,6 +7,7 @@ namespace Linqor
         /// <summary>
         /// Returns distinct elements from an ordered sequence.
         /// </summary>
+        /// <param name="source">The ordered sequence to remove duplicate elements from.</param>
         public static OrderedEnumerable<T, TKey> Distinct<T, TKey>(
             this OrderedEnumerable<T, TKey> source)
         {

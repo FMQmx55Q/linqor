@@ -5,8 +5,17 @@ namespace Linqor
     public static partial class Extensions
     {
         /// <summary>
-        /// Produces the difference of two ordered sequences.
+        /// Produces the set difference of two ordered sequences.
         /// </summary>
+        /// <param name="left">
+        /// An ordered sequence whose elements
+        /// that are not also in second will be returned.
+        /// </param>
+        /// <param name="right">
+        /// An ordered sequence that follows same ordering rules as the first ordered sequence
+        /// whose elements that also occur in the first ordered sequence
+        /// will cause those elements to be removed from the returned sequence.
+        /// </param>
         public static OrderedEnumerable<T, TKey> Except<T, TKey>(
             this OrderedEnumerable<T, TKey> left,
             IEnumerable<T> right)

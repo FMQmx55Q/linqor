@@ -1,13 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Linqor
 {
     public static partial class Extensions
     {
         /// <summary>
-        /// Produces the union of two ordered sequences.
+        /// Produces the set union of two ordered sequences.
         /// </summary>
+        /// <param name="left">
+        /// An ordered sequence whose distinct elements
+        /// form the first set for the union.
+        /// </param>
+        /// <param name="right">
+        /// A sequence that follows same ordering rules as the first sequence
+        /// whose distinct elements
+        /// form the second set for the union.
+        /// </param>
         public static OrderedEnumerable<T, TKey> Union<T, TKey>(
             this OrderedEnumerable<T, TKey> left,
             IEnumerable<T> right)

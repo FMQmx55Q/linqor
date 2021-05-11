@@ -1,13 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Linqor
 {
     public static partial class Extensions
     {
         /// <summary>
-        /// Produces the intersection of two ordered sequences.
+        /// Produces the set intersection of two ordered sequences.
         /// </summary>
+        /// <param name="left">
+        /// An ordered sequence whose distinct elements
+        /// that also appear in the second sequence will be returned.
+        /// </param>
+        /// <param name="right">
+        /// A sequence that follows same ordering rules as the first sequence
+        /// whose distinct elements
+        /// that also appear in the first sequence will be returned.
+        /// </param>
         public static IEnumerable<T> Intersect<T, TKey>(
             this OrderedEnumerable<T, TKey> left,
             IEnumerable<T> right)

@@ -7,6 +7,11 @@ namespace Linqor
         /// <summary>
         /// Concatenates two ordered sequences.
         /// </summary>
+        /// <param name="left">The first ordered sequence to concatenate.</param>
+        /// <param name="right">
+        /// The sequence that follows same ordering rules as the first ordered sequence
+        /// to concatenate to the first ordered sequence.
+        /// </param>
         public static OrderedEnumerable<T, TKey> Concat<T, TKey>(
             this OrderedEnumerable<T, TKey> left,
             IEnumerable<T> right)

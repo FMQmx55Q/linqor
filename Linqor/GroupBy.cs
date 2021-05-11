@@ -9,6 +9,8 @@ namespace Linqor
         /// <summary>
         /// Groups the elements of an ordered sequence.
         /// </summary>
+        /// <param name="source">An ordered sequence whose elements to group.</param>
+        
         public static OrderedEnumerable<OrderedGrouping<TKey, T>, TKey> GroupBy<T, TKey>(
             this OrderedEnumerable<T, TKey> source)
         {
