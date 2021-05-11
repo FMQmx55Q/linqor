@@ -18,9 +18,8 @@ namespace Linqor
             OrderedEnumerable<TResult, TResultKey> seed,
             Func<TSource, IEnumerable<TResult>> selector)
         {
-            return source
-                .Select(selector)
-                .Aggregate(seed, (left, right) => Extensions.Concat(left, right.AsOrderedLike(left)));
+            return SelectMany(source, (item, _) => selector(item), seed.Comparer)
+                .AsOrderedLike(seed);
         }
 
         /// <summary>
@@ -34,12 +33,28 @@ namespace Linqor
         public static OrderedEnumerable<TResult, TResultKey> SelectMany<TSource, TSourceKey, TResult, TResultKey>(
             this OrderedEnumerable<TSource, TSourceKey> source,
             OrderedEnumerable<TResult, TResultKey> seed,
-            Func<TSource, int, OrderedEnumerable<TResult, TResultKey>> selector)
+            Func<TSource, int, IEnumerable<TResult>> selector)
         {
-            return source
-                .Select(selector)
-                .Aggregate(seed, (left, right) => Extensions.Concat(left, right.AsOrderedLike(left)));
+            return SelectMany(source, selector, seed.Comparer)
+                .AsOrderedLike(seed);
         }
-        
+
+        private static IEnumerable<TResult> SelectMany<TSource, TResult>(
+            IEnumerable<TSource> source,
+            Func<TSource, int, IEnumerable<TResult>> selector,
+            IComparer<TResult> comparer)
+        {
+            var result = Enumerable.Empty<TResult>();
+
+            foreach (var items in source.Select(selector))
+            {
+                result = Extensions.Concat(result, items, comparer);
+            }
+            
+            foreach (var item in result)
+            {
+                yield return item;
+            }
+        }
     }
 }
