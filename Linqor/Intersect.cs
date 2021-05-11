@@ -16,7 +16,7 @@ namespace Linqor
         /// whose distinct elements
         /// that also appear in the first sequence will be returned.
         /// </param>
-        public static IEnumerable<T> Intersect<T, TKey>(
+        public static OrderedEnumerable<T, TKey> Intersect<T, TKey>(
             this OrderedEnumerable<T, TKey> left,
             IEnumerable<T> right)
         {
