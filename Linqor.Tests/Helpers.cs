@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using static Linqor.Tests.Helpers;
 
 namespace Linqor.Tests
@@ -11,6 +12,9 @@ namespace Linqor.Tests
 
         public static string Get2DID(int index, int length) =>
             $"{index / length}:{index % length}";
+
+        public static T[] Repeat<T>(T element, int count) =>
+            Enumerable.Repeat(element, count).ToArray();
     }
 
     public class NumberInStringComparer : IEqualityComparer<string>
