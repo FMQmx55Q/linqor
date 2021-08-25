@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Linqor
 {
@@ -34,15 +33,18 @@ namespace Linqor
 
         public virtual IEnumerator<T> GetEnumerator()
         {
-            (bool HasValue, T Value) previous = default;
+            bool previousHasValue = false;
+            T previousValue = default;
+
             foreach (var current in _source)
             {
-                if (previous.HasValue && _comparer.Compare(previous.Value, current) > 0)
+                if (previousHasValue && _comparer.Compare(previousValue, current) > 0)
                     throw new UnorderedElementDetectedException();
 
                 yield return current;
 
-                previous = (true, current);
+                previousHasValue = true;
+                previousValue = current;
             }
         }
 
