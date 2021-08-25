@@ -4,12 +4,15 @@
         <Title>Linqor</Title>
         <Authors>Andrew Morozov</Authors>
         <Copyright>Andrew Morozov</Copyright>
-        <Description>Linq extensions for ordered sequences. They have better perfomance in comparison to standard extensions. They don't enumerate entire sequences into HashSet&lt;T&gt; or lookup. With these you can lazily handle very large or even infinite sequences as long as they're ordered. Concat, Distinct, Except, GroupBy, GroupJoin, Intersect, Join, SelectMany and Union are available.</Description>
-        <PackageIconUrl>http://i.imgur.com/r0DNvtB.png</PackageIconUrl>
+        <Description>
+            Linq extensions for ordered sequences. They have better perfomance in comparison to standard extensions.
+            They don't enumerate entire sequences into HashSet&lt;T&gt; or lookup. With these you can lazily handle very large or even infinite sequences as long as they're ordered.
+            Concat, Distinct, Except, GroupBy, GroupJoin, Intersect, Join, SelectMany and Union are available.</Description>
+        <PackageIcon>icon.png</PackageIcon>
         <PackageProjectUrl>https://github.com/dangerozov/linqor</PackageProjectUrl>
         <PackageTags>linq;ordered;ienumerable;extensions</PackageTags>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/dangerozov/linqor/master/LICENSE</PackageLicenseUrl>
+        <PackageLicense>https://raw.githubusercontent.com/dangerozov/linqor/master/LICENSE</PackageLicense>
         <PackageReleaseNotes>Reworked API to make it LINQ compliant.</PackageReleaseNotes>
 
         <RepositoryType>git</RepositoryType>
@@ -19,6 +22,7 @@
         <TargetFramework>netstandard1.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
+        <None Include="icon.png" Pack="true" PackagePath="" />
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Linqor.Tests</_Parameter1>
         </AssemblyAttribute>
