@@ -1,5 +1,5 @@
 # Linqor
-[![Build Status](https://travis-ci.org/dangerozov/linqor.svg?branch=master)](https://travis-ci.org/dangerozov/linqor)
+[![Build Status](https://app.travis-ci.com/dangerozov/linqor.svg?branch=master)](https://app.travis-ci.com/github/dangerozov/linqor)
 
 Linq extensions for ordered sequences. They have better perfomance in comparison to standard extensions. They don't enumerate entire sequences into `HashSet<T>` or lookup. With these you can lazily handle very large or even infinite sequences as long as they're ordered.
 
