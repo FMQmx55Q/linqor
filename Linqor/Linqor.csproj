@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Version>3.0.0</Version>
+        <Version>3.0.1</Version>
         <Title>Linqor</Title>
         <Authors>Andrew Morozov</Authors>
         <Copyright>Andrew Morozov</Copyright>
-        <Description>
-            Linq extensions for ordered sequences. They have better perfomance in comparison to standard extensions.
-            They don't enumerate entire sequences into HashSet&lt;T&gt; or lookup. With these you can lazily handle very large or even infinite sequences as long as they're ordered.
-            Concat, Distinct, Except, GroupBy, GroupJoin, Intersect, Join, SelectMany and Union are available.</Description>
+        <Description>Linq extensions for ordered sequences. They have better perfomance in comparison to standard extensions. They don't enumerate entire sequences into HashSet&lt;T&gt; or lookup. With these you can lazily handle very large or even infinite sequences as long as they're ordered. Concat, Distinct, Except, GroupBy, GroupJoin, Intersect, Join, SelectMany and Union are available.</Description>
         <PackageIcon>icon.png</PackageIcon>
         <PackageProjectUrl>https://github.com/dangerozov/linqor</PackageProjectUrl>
         <PackageTags>linq;ordered;ienumerable;extensions</PackageTags>
@@ -19,7 +16,10 @@
         <RepositoryUrl>https://github.com/dangerozov/linqor</RepositoryUrl>
 
         <LangVersion>9.0</LangVersion>
-        <TargetFramework>netstandard1.0</TargetFramework>
+        <TargetFrameworks>netstandard1.0;net462;net47;net48;net50</TargetFrameworks>
+
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
     <ItemGroup>
         <None Include="icon.png" Pack="true" PackagePath="" />

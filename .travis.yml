@@ -8,4 +8,4 @@ install:
 script:
 - dotnet build Linqor
 - dotnet build Linqor.Tests
-- cd Linqor.Tests && dotnet test
+- dotnet test Linqor.Tests
