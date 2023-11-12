@@ -2,14 +2,14 @@
     <PropertyGroup>
         <Version>3.0.1</Version>
         <Title>Linqor</Title>
-        <Authors>Andrew Morozov</Authors>
-        <Copyright>Andrew Morozov</Copyright>
+        <Authors>FMQmx55Q</Authors>
+        <Copyright>FMQmx55Q</Copyright>
         <Description>Linq extensions for ordered sequences. They have better perfomance in comparison to standard extensions. They don't enumerate entire sequences into HashSet&lt;T&gt; or lookup. With these you can lazily handle very large or even infinite sequences as long as they're ordered. Concat, Distinct, Except, GroupBy, GroupJoin, Intersect, Join, SelectMany and Union are available.</Description>
         <PackageIcon>icon.png</PackageIcon>
-        <PackageProjectUrl>https://github.com/dangerozov/linqor</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/FMQmx55Q/linqor</PackageProjectUrl>
         <PackageTags>linq;ordered;ienumerable;extensions</PackageTags>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <PackageLicense>https://raw.githubusercontent.com/dangerozov/linqor/master/LICENSE</PackageLicense>
+        <PackageLicense>https://raw.githubusercontent.com/FMQmx55Q/linqor/master/LICENSE</PackageLicense>
         <PackageReleaseNotes>Reworked API to make it LINQ compliant.</PackageReleaseNotes>
 
         <RepositoryType>git</RepositoryType>
